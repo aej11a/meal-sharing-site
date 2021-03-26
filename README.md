@@ -1,1 +1,1 @@
-# meal-sharing-app
+# meal-sharing-site
