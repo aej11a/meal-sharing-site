@@ -14,6 +14,7 @@ firebase.initializeApp({
 })
 
 require('./db_sample')
+require('./forward-geocoding')
 
 app.get('/sample', require('./api/sample'))
 
