@@ -3,7 +3,7 @@
 ## How to Start
 
 1. Run `npm i` in the `server` folder to install modules
-2. Run `npm watch` to start the development server. This will automatically restart when you make a change in the code.
+2. Run `npm run watch` to start the development server. This will automatically restart when you make a change in the code.
 
 ## Structure
 
