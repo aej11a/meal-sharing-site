@@ -7,7 +7,8 @@ const params = {
 axios
     .get('http://api.positionstack.com/v1/forward', { params })
     .then((response) => {
-        console.log(response.data)
+        console.log('Latitude: ' + response.data.data[0].latitude)
+        console.log('Longitude: ' + response.data.data[0].longitude)
     })
     .catch((error) => {
         console.log(error)

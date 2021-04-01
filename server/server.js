@@ -13,7 +13,7 @@ firebase.initializeApp({
     appId: '1:760425941932:web:52245590ebd6b7b85ac809',
 })
 
-require('./db_sample')
+//require('./db_sample')
 require('./forward-geocoding')
 
 app.get('/sample', require('./api/sample'))
