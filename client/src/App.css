@@ -36,3 +36,35 @@
         transform: rotate(360deg);
     }
 }
+
+.create-account-button,
+.sign-in-button {
+    width: 200px;
+}
+
+.create-account-button {
+    border: 1px solid #8c7d70;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    margin: 0;
+    padding: 3px;
+    background-color: white;
+    color: #8c7d70;
+}
+
+.sign-in-button {
+    border: 1px solid #8c7d70;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-left: 0;
+    margin: 0;
+    padding: 3px;
+    background-color: white;
+    color: #8c7d70;
+}
+
+.create-account-button:disabled,
+.sign-in-button:disabled {
+    background-color: #999;
+    color: white;
+}
