@@ -16,6 +16,8 @@ firebase.initializeApp({
 require('./db_sample')
 require('./forward-geocoding')
 
+app.use(express.json())
+
 app.get('/sample', require('./api/sample'))
 
 app.listen(3000, () => {

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
+import { ButtonGroup, Button, TextField, Grid } from '@material-ui/core'
 import {
     useCreateUserWithEmailAndPassword as useCreateUser,
     useSignInWithEmailAndPassword as useSignIn,
@@ -30,7 +31,6 @@ const CreateAccount = () => {
         'Loading...'
     ) : (
         <>
-            {JSON.stringify({ createState })}
             <form
                 onSubmit={async (e) => {
                     e.preventDefault()
@@ -62,36 +62,36 @@ const CreateAccount = () => {
                 }}
             >
                 <div style={{ margin: 10 }}>
-                    <label>
-                        {' '}
-                        Email: <br />
-                        <input name="email" type="text" />
-                    </label>
+                    <TextField variant="outlined" label="email" type="text" />
                 </div>
                 <div style={{ margin: 10 }}>
-                    <label>
-                        {' '}
-                        Password: <br />
-                        <input name="password" type="password" />
-                    </label>
+                    <TextField
+                        variant="outlined"
+                        label="password"
+                        type="password"
+                    />
                 </div>
                 <div style={{ margin: 10 }}>
-                    <label>
-                        {' '}
-                        First Name: <br />
-                        <input name="firstname" type="text" />
-                    </label>
+                    <TextField
+                        variant="outlined"
+                        label="firstname"
+                        type="text"
+                    />
                 </div>
                 <div style={{ margin: 10 }}>
-                    <label>
-                        {' '}
-                        Last Name: <br />
-                        <input name="lastname" type="text" />
-                    </label>
+                    <TextField
+                        variant="outlined"
+                        label="lastname"
+                        type="text"
+                    />
                 </div>
-                <button type="submit" style={{ margin: 10 }}>
+                <Button
+                    type="submit"
+                    style={{ margin: 10 }}
+                    variant="contained"
+                >
                     Create Account
-                </button>
+                </Button>
             </form>
         </>
     )
@@ -109,7 +109,6 @@ const SignIn = () => {
         'Loading...'
     ) : (
         <>
-            {JSON.stringify({ signedInUser, signinError, signinLoading })}
             <form
                 onSubmit={(e) => {
                     e.preventDefault()
@@ -120,22 +119,22 @@ const SignIn = () => {
                 }}
             >
                 <div style={{ margin: 10 }}>
-                    <label>
-                        {' '}
-                        Email: <br />
-                        <input name="email" type="text" />
-                    </label>
+                    <TextField variant="outlined" label="email" type="text" />
                 </div>
                 <div style={{ margin: 10 }}>
-                    <label>
-                        {' '}
-                        Password: <br />
-                        <input name="password" type="password" />
-                    </label>
+                    <TextField
+                        variant="outlined"
+                        label="password"
+                        type="password"
+                    />
                 </div>
-                <button type="submit" style={{ margin: 10 }}>
+                <Button
+                    type="submit"
+                    style={{ margin: 10 }}
+                    variant="contained"
+                >
                     Sign In
-                </button>
+                </Button>
             </form>
         </>
     )
@@ -162,38 +161,52 @@ export const AccountPage = () => {
     if (user)
         return (
             <div>
-                <p>
-                    You are signed in as{' '}
-                    {JSON.stringify(user.providerData[0].displayName)}
-                </p>
-                <button onClick={logout}>Log Out</button>
+                <p>You are signed in as {user.providerData[0].displayName}</p>
+                <Button onClick={logout}>Log Out</Button>
             </div>
         )
     else
         return (
-            <div>
-                <button
-                    disabled={showCreate}
-                    className={'create-account-button'}
-                    onTouchStart={switchToCreate}
-                    onMouseDown={switchToCreate}
+            <Grid
+                container
+                direction="column"
+                alignItems="center"
+                justify="center"
+                style={{ minHeight: '100vh' }}
+            >
+                <div
+                    style={{
+                        minHeight: '100vh',
+                        display: 'inline',
+                        marginTop: 25,
+                    }}
                 >
-                    Create Account
-                </button>
-                <button
-                    disabled={showSignIn}
-                    className={'sign-in-button'}
-                    onTouchStart={switchToSignIn}
-                    onMouseDown={switchToSignIn}
-                >
-                    Sign In
-                </button>
+                    <ButtonGroup
+                        color="secondary"
+                        aria-label="outlined primary button group"
+                    >
+                        <Button
+                            disabled={showCreate}
+                            onTouchStart={switchToCreate}
+                            onMouseDown={switchToCreate}
+                        >
+                            Create Account
+                        </Button>
+                        <Button
+                            disabled={showSignIn}
+                            onTouchStart={switchToSignIn}
+                            onMouseDown={switchToSignIn}
+                        >
+                            Sign In
+                        </Button>
+                    </ButtonGroup>
 
-                {displayedTab === DISPLAY_STATES.create ? (
-                    <CreateAccount />
-                ) : (
-                    <SignIn />
-                )}
-            </div>
+                    {displayedTab === DISPLAY_STATES.create ? (
+                        <CreateAccount />
+                    ) : (
+                        <SignIn />
+                    )}
+                </div>
+            </Grid>
         )
 }
