@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import { Home } from './Home'
 import { AccountPage } from './Account/AccountPage'
 import './App.css'
+import React from 'react'
 
 export default function App() {
     return (
