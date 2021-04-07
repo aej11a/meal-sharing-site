@@ -15,6 +15,8 @@ firebase.initializeApp({
 
 require('./db_sample')
 
+app.use(express.json())
+
 app.get('/sample', require('./api/sample'))
 
 app.listen(3000, () => {
