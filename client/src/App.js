@@ -10,6 +10,16 @@ import Select from '@material-ui/core/Select'
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
+import {
+    BrowserRouter as Router,
+    Route,
+    Switch,
+    Link,
+    Redirect,
+} from 'react-router-dom'
+//Pages
+import MainPage from './pages' ///< index.jsx will be automatically imported
+import MealDisplay from './pages/mealdisplay'
 
 function App() {
     //form component
@@ -281,6 +291,11 @@ function App() {
 
     return (
         <div className="App">
+            <Router>
+                <Route exact path="/" component={MainPage} />
+                <Route exact path="/mealdisplay" component={MealDisplay} />
+            </Router>
+
             <div>
                 <MainTitle />
                 <MealCreationForm />
