@@ -1,11 +1,8 @@
 import React from 'react'
+import MealCreationForm from '../components/MealCreationForm'
 
 const MealCreation = () => {
-    return (
-        <div>
-            <h1>where you create meals</h1>
-        </div>
-    )
+    return <MealCreationForm />
 }
 
 export default MealCreation
