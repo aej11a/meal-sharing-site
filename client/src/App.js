@@ -10,6 +10,7 @@ import Select from '@material-ui/core/Select'
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
+import { db } from './firebase'
 
 function App() {
     //form component
@@ -32,25 +33,31 @@ function App() {
         }
 
         handleInputChange(event) {
-            const target = event.target
-            const value =
-                target.type === 'checkbox?' ? target.checked : target.value
-            const name = target.name
-
-            this.setState({
-                [name]: value,
-            })
-            console.log('Change detected. State Updated' + name + '=' + value)
+            this.setState({ value: event.target.value })
         }
 
         handleSubmit(event) {
-            alert(
-                'A form was submitted: ' +
-                    this.state.name +
-                    ' //' +
-                    this.state.email
-            )
             event.preventDefault()
+            console.log(this.state)
+
+            db.collection('meals')
+                .doc(this.state.mealType)
+                .add({
+                    type: this.state.mealType,
+                    name: this.state.mealName,
+                    ingredients: this.state.mealIngredients,
+                    time: this.state.mealTime,
+                    location: this.state.mealLocation,
+                    guests: this.state.mealGuestsNum,
+                    fee: this.state.mealGuestFee,
+                    expire: this.state.mealExpiration,
+                })
+                .then((docRef) => {
+                    console.log('Doc written with ID: ', docRef.id)
+                })
+                .catch((error) => {
+                    console.error('Error adding document: ', error)
+                })
         }
 
         render() {
@@ -127,8 +134,8 @@ function App() {
                                     <Select
                                         labelId="demo-simple-select-filled-label"
                                         id="demo-simple-select-filled"
-                                        value={this.state.name}
-                                        onChange={this.handleChange}
+                                        value={this.state.mealTime}
+                                        //onChange={this.handleChange}
                                     >
                                         <MenuItem value="">
                                             <em>None</em>
@@ -182,7 +189,7 @@ function App() {
                                     <Select
                                         labelId="demo-simple-select-filled-label"
                                         id="demo-simple-select-filled"
-                                        value={this.state.name}
+                                        value={this.state.mealGuestsNum}
                                         onChange={this.handleChange}
                                     >
                                         <MenuItem value="">
@@ -238,7 +245,7 @@ function App() {
                                     <Select
                                         labelId="demo-simple-select-filled-label"
                                         id="demo-simple-select-filled"
-                                        value={this.state.name}
+                                        value={this.state.mealExpiration}
                                         onChange={this.handleChange}
                                     >
                                         <MenuItem value="">
