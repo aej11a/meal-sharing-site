@@ -1,6 +1,6 @@
 import logo from './logo.svg'
 import './App.css'
-import React from 'react'
+import React, { Component } from 'react'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -10,6 +10,7 @@ import Select from '@material-ui/core/Select'
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
+
 import {
     BrowserRouter as Router,
     Route,
@@ -17,9 +18,10 @@ import {
     Link,
     Redirect,
 } from 'react-router-dom'
+
 //Pages
-import MainPage from './pages' ///< index.jsx will be automatically imported
-import MealDisplay from './pages/mealdisplay'
+import MealPage from './pages/MealPage' ///< index.jsx will be automatically imported
+import MealCreation from './pages/MealCreation'
 
 function App() {
     //form component
@@ -292,14 +294,9 @@ function App() {
     return (
         <div className="App">
             <Router>
-                <Route exact path="/" component={MainPage} />
-                <Route exact path="/mealdisplay" component={MealDisplay} />
+                <Route exact path="/MealPage" component={MealPage} />
+                <Route exact path="/MealCreation" component={MealCreation} />
             </Router>
-
-            <div>
-                <MainTitle />
-                <MealCreationForm />
-            </div>
         </div>
     )
 }
