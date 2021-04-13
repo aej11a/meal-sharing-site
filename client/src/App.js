@@ -7,6 +7,7 @@ import { NavBar } from './components/NavBar'
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
 import orange from '@material-ui/core/colors/orange'
 import { MealCreation } from './pages/MealCreation'
+import { MealDisplay } from './pages/MealDisplay'
 
 const theme = createMuiTheme({
     palette: {
@@ -38,6 +39,10 @@ export const App = () => {
                     </Route>
                     <Route exact path="/meals/new">
                         <MealCreation />
+                    </Route>
+
+                    <Route exact path="/meals/display">
+                        <MealDisplay />
                     </Route>
                 </Switch>
             </Router>
