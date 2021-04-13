@@ -37,6 +37,26 @@ export default function MealCard() {
 
     const handleExpandClick = () => {
         setExpanded(!expanded)
+
+        /*
+        Functionality for get data from firestore
+        Note: the .doc() has a static value for testing purposes.
+            We should replace that with a dynamic value at some point,
+        */
+        const docRef = database.collection('meals').doc('aEpQG38Kws4GsCwikhhH')
+
+        docRef
+            .get()
+            .then((doc) => {
+                if (doc.exists) {
+                    console.log('Document data:', doc.data())
+                } else {
+                    console.log('No such document!')
+                }
+            })
+            .catch(function (error) {
+                console.log('Error getting document:', error)
+            })
     }
 
     return (
