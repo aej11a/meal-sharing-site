@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { ButtonGroup, Button, TextField, Grid } from '@material-ui/core'
 import {
-    useCreateUserWithEmailAndPassword as useCreateUser,
     useSignInWithEmailAndPassword as useSignIn,
     useAuthState,
 } from 'react-firebase-hooks/auth'
@@ -100,8 +99,10 @@ const CreateAccount = () => {
 const SignIn = () => {
     const [
         signInWithEmailAndPassword,
+        // eslint-disable-next-line
         signedInUser,
         signinLoading,
+        // eslint-disable-next-line
         signinError,
     ] = useSignIn(auth)
 
@@ -141,6 +142,7 @@ const SignIn = () => {
 }
 
 export const AccountPage = () => {
+    // eslint-disable-next-line
     const [user, loading, error] = useAuthState(auth)
 
     // create an enum to keep states clean

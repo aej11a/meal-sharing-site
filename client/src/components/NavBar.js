@@ -3,8 +3,6 @@ import {
     AppBar,
     Toolbar,
     Typography,
-    Button,
-    Link,
     ListItem,
     ListItemIcon,
     ListItemText,
@@ -39,6 +37,7 @@ function ListItemLink(props) {
 }
 
 export const NavBar = () => {
+    // eslint-disable-next-line
     const [user, loading, error] = useAuthState(firebase.auth())
 
     return (
