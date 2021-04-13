@@ -1,11 +1,12 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import { Home } from './Home'
-import { AccountPage } from './Account/AccountPage'
+import { AccountPage } from './pages/Account/AccountPage'
 import './App.css'
-import { NavBar } from './NavBar/NavBar'
+import { NavBar } from './components/NavBar'
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
 import orange from '@material-ui/core/colors/orange'
+import { MealCreation } from './pages/MealCreation'
 
 const theme = createMuiTheme({
     palette: {
@@ -21,7 +22,7 @@ const theme = createMuiTheme({
     },
 })
 
-export default function App() {
+export const App = () => {
     return (
         <ThemeProvider theme={theme}>
             <Router>
@@ -35,8 +36,13 @@ export default function App() {
                     <Route exact path="/account">
                         <AccountPage />
                     </Route>
+                    <Route exact path="/meals/new">
+                        <MealCreation />
+                    </Route>
                 </Switch>
             </Router>
         </ThemeProvider>
     )
 }
+
+export default App

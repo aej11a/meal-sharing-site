@@ -5,7 +5,7 @@ import {
     useSignInWithEmailAndPassword as useSignIn,
     useAuthState,
 } from 'react-firebase-hooks/auth'
-import { firebase } from '../firebase'
+import { firebase } from '../../firebase'
 const auth = firebase.auth()
 const logout = () => {
     firebase.auth().signOut()

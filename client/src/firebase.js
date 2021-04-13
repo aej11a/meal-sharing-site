@@ -9,5 +9,7 @@ export const firebase = firebaseLib.initializeApp({
     appId: '1:760425941932:web:52245590ebd6b7b85ac809',
 })
 
+export const db = firebase.firestore()
+
 require('firebase/auth')
 require('firebase/firestore')
