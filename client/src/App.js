@@ -20,6 +20,7 @@ import {
 } from 'react-router-dom'
 
 //Pages
+import HomePage from './pages'
 import MealDisplay from './pages/MealDisplay' ///< index.jsx will be automatically imported
 import MealCreation from './pages/MealCreation'
 
@@ -27,6 +28,7 @@ function App() {
     return (
         <div className="App">
             <Router>
+                <Route exact path="/" component={HomePage} />
                 <Route exact path="/MealDisplay" component={MealDisplay} />
                 <Route exact path="/MealCreation" component={MealCreation} />
             </Router>
