@@ -1,270 +1,247 @@
-import React, { Component } from 'react'
-import Title from './Title'
-import Image from './Image'
+import React, { useState } from 'react'
 import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
-import MenuItem from '@material-ui/core/MenuItem'
-import FormHelperText from '@material-ui/core/FormHelperText'
-import FormControl from '@material-ui/core/FormControl'
-import Select from '@material-ui/core/Select'
+import MTextField from '@material-ui/core/TextField'
+import MSelect from '@material-ui/core/Select'
+import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
+import MenuItem from '@material-ui/core/MenuItem'
+import InputLabel from '@material-ui/core/InputLabel'
+import { db } from '../firebase'
+import { getCoordinates } from '../forward-geocoding'
 
-export default class MealCreationForm extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            mealType: ' ',
-            mealName: ' ',
-            mealIngredients: ' ',
-            mealTime: ' ',
-            mealLocation: ' ',
-            mealGuestsNum: ' ',
-            mealGuestFee: ' ',
-            mealExpiration: ' ',
-        }
+const Select = (props) => (
+    <MSelect
+        {...props}
+        style={{ ...props.style, display: 'block', marginBottom: 10 }}
+    />
+)
+const TextField = (props) => (
+    <MTextField
+        {...props}
+        style={{ ...props.style, display: 'block', marginBottom: 10 }}
+    />
+)
 
-        this.handleChange = this.handleInputChange.bind(this)
-        this.handleSubmit = this.handleSubmit.bind(this)
+const DishDisplay = ({ dish, removeDish }) => {
+    console.log(dish)
+    return (
+        <Card>
+            <CardContent>
+                <p style={{ textTransform: 'capitalize', color: '#999' }}>
+                    {dish.dishCourse}
+                </p>
+                <h3>{dish.dishName}</h3>
+                <p>{dish.dishIngredients}</p>
+            </CardContent>
+            <CardActions>
+                <Button size="small" onClick={removeDish}>
+                    Remove
+                </Button>
+            </CardActions>
+        </Card>
+    )
+}
+
+//form component
+export const MealCreationForm = () => {
+    const [isShowDishes, setShowDishes] = useState(false)
+    const [dishes, setDishes] = useState([])
+    const [course, setCourse] = useState()
+    const [dishName, setDishName] = useState()
+    const [dishIngredients, setDishIngredients] = useState()
+
+    const addDish = () => {
+        console.log()
+        setDishes([
+            ...dishes,
+            {
+                dishName,
+                dishIngredients,
+                dishCourse: course,
+            },
+        ])
+        setCourse(null)
+        setDishName(null)
+        setDishIngredients(null)
+        setShowDishes(false)
     }
 
-    handleInputChange(event) {
-        const target = event.target
-        const value =
-            target.type === 'checkbox?' ? target.checked : target.value
-        const name = target.name
-
-        this.setState({
-            [name]: value,
-        })
-        console.log('Change detected. State Updated' + name + '=' + value)
-    }
-
-    handleSubmit(event) {
-        alert(
-            'A form was submitted: ' +
-                this.state.name +
-                ' //' +
-                this.state.email
-        )
+    const handleSubmit = async (event) => {
         event.preventDefault()
+        document.getElementById('create-form').style.display = 'none'
+        document.getElementById('loading').style.display = 'block'
+
+        const coordinates = await getCoordinates(event.target.location.value)
+
+        // Don't use .doc(), so that firebase will make an ID for us
+        db.collection('meals')
+            .add({
+                name: event.target.mealname.value,
+                dishes: dishes.map((dish) => {
+                    dish.dishIngredients = dish.dishIngredients
+                        .toLowerCase()
+                        .replace(' ', '')
+                    return dish
+                }),
+                time: event.target.time.value,
+                location: event.target.location.value,
+                maxGuests: event.target.numguests.value,
+                fee: event.target.fee.value,
+                expire: event.target.expiration.value,
+                ...coordinates,
+            })
+            .then((docRef) => {
+                console.log('Doc written with ID: ', docRef.id)
+                document.getElementById('create-form').style.display = 'block'
+                document.getElementById('loading').style.display = 'none'
+            })
+            .catch((error) => {
+                console.error('Error adding document: ', error)
+                document.getElementById('create-form').style.display = 'block'
+                document.getElementById('loading').style.display = 'none'
+            })
     }
 
-    render() {
-        return (
-            <Card>
-                <div>
-                    <form onSubmit={this.handleSubmit}>
-                        <div className="form-group">
-                            <label for="nameImput">Type of Meal</label>
-                            <div>
-                                <TextField
-                                    id="outlined-basic"
-                                    label="Outlined"
-                                    variant="outlined"
+    return (
+        <Grid
+            container
+            direction="column"
+            alignItems="center"
+            justify="center"
+            style={{ minHeight: '100vh' }}
+        >
+            <Grid item>
+                <Card
+                    style={{ padding: 50, minWidth: '25vw' }}
+                    id="create-form"
+                >
+                    <div style={{ display: isShowDishes ? 'none' : 'block' }}>
+                        <h1>Create your Meal</h1>
+                        <form onSubmit={handleSubmit}>
+                            <TextField
+                                id="outlined-basic"
+                                label="Meal Name"
+                                name="mealname"
+                                variant="outlined"
+                            />
+                            <TextField
+                                id="datetime-local"
+                                label="Meal Time"
+                                type="datetime-local"
+                                name="time"
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                            />
+                            <TextField
+                                id="outlined-basic"
+                                label="Location"
+                                name="location"
+                                variant="outlined"
+                            />
+                            <h6>Dishes</h6>
+                            {dishes.map((dish, idx) => (
+                                <DishDisplay
+                                    dish={dish}
+                                    removeDish={() =>
+                                        setDishes(
+                                            dishes.filter(
+                                                (dish, testIdx) =>
+                                                    testIdx !== idx
+                                            )
+                                        )
+                                    }
                                 />
+                            ))}
+                            <Button
+                                onClick={() => setShowDishes(true)}
+                                variant="contained"
+                            >
+                                Add Dish
+                            </Button>
+                            <br />
+                            <br />
+                            <TextField
+                                id="guests-number"
+                                label="Number of Guests"
+                                type="number"
+                                name="numguests"
+                                variant="outlined"
+                            />
+                            <br />
+                            <TextField
+                                id="outlined-basic"
+                                label="Fee in $/Person"
+                                type="number"
+                                name="fee"
+                                variant="outlined"
+                            />
+                            <br />
+                            <TextField
+                                id="datetime-local"
+                                label="Invite Expiration"
+                                type="datetime-local"
+                                name="expiration"
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                            />
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                type="submit"
+                            >
+                                Submit
+                            </Button>
+                        </form>
+                    </div>
 
-                                {/** 
-                          <input
-                              type="text"
-                              name="name"
-                              value={this.state.name}
-                              onChange={this.handleChange}
-                              className="form-control"
-                              id="nameImput"
-                              placeholder="ex: Mexican"
-                           /> */}
-                            </div>
+                    <div style={{ display: isShowDishes ? 'block' : 'none' }}>
+                        <h1>Add Dishes</h1>
+                        <div>
+                            <InputLabel id="course-label">Course</InputLabel>
+                            <Select
+                                labelId="course-label"
+                                id="course-select"
+                                autoComplete="off"
+                                value={course}
+                                onChange={(e) => setCourse(e.target.value)}
+                            >
+                                <MenuItem value={'appetizer'}>
+                                    Appetizer
+                                </MenuItem>
+                                <MenuItem value={'entree'}>Entree</MenuItem>
+                                <MenuItem value={'dessert'}>Dessert</MenuItem>
+                            </Select>
+                            <TextField
+                                id="dish-name"
+                                label="Dish Name"
+                                variant="outlined"
+                                autoComplete="off"
+                                onChange={(e) => setDishName(e.target.value)}
+                            />
+                            <TextField
+                                id="outlined-basic"
+                                label="Dish Ingredients (comma separated)"
+                                variant="outlined"
+                                autoComplete="off"
+                                onChange={(e) =>
+                                    setDishIngredients(e.target.value)
+                                }
+                            />
+                            <br />
+                            <Button onClick={addDish} variant={'contained'}>
+                                Add Dish
+                            </Button>
                         </div>
-                        <div className="form-group">
-                            <label for="emailImput">Name of Meal</label>
-                            <div>
-                                <TextField
-                                    id="outlined-basic"
-                                    label="Outlined"
-                                    variant="outlined"
-                                />
-
-                                {/** 
-                          <input
-                              name="email"
-                              type="email"
-                              value={this.state.email}
-                              onChange={this.handleChange}
-                              className="form-control"
-                              id="emailImput"
-                              placeholder="ex: Joan's Taco Tuesday"
-                          /> */}
-                            </div>
-                        </div>
-                        <div className="form-group">
-                            <label for="emailInput">Ingredients</label>
-                            <div>
-                                <TextField
-                                    id="outlined-basic"
-                                    label="Outlined"
-                                    variant="outlined"
-                                />
-
-                                {/** 
-                          <input
-                              name="email"
-                              type="email"
-                              value={this.state.email}
-                              onChange={this.handleChange}
-                              className="form-control"
-                              id="emailImput"
-                              placeholder="ex: Joan's Taco Tuesday"
-                          /> */}
-                            </div>
-                        </div>
-                        <div className="form-group">
-                            <label for="timeInput">Time</label>
-                            <div>
-                                <Select
-                                    labelId="demo-simple-select-filled-label"
-                                    id="demo-simple-select-filled"
-                                    value={this.state.name}
-                                    onChange={this.handleChange}
-                                >
-                                    <MenuItem value="">
-                                        <em>None</em>
-                                    </MenuItem>
-                                    <MenuItem value={100}>1:00 PM</MenuItem>
-                                    <MenuItem value={200}>2:00 PM</MenuItem>
-                                    <MenuItem value={300}>3:00 PM</MenuItem>
-                                    <MenuItem value={400}>4:00 PM</MenuItem>
-                                    <MenuItem value={400}>5:00 PM</MenuItem>
-                                </Select>
-
-                                {/** 
-                          <input
-                              name="email"
-                              type="email"
-                              value={this.state.email}
-                              onChange={this.handleChange}
-                              className="form-control"
-                              id="emailImput"
-                              placeholder="ex: Joan's Taco Tuesday"
-                          /> */}
-                            </div>
-                        </div>
-                        <div className="form-group">
-                            <label for="emailImput">Location</label>
-                            <div>
-                                <TextField
-                                    id="outlined-basic"
-                                    label="Outlined"
-                                    variant="outlined"
-                                />
-
-                                {/** 
-                          <input
-                              name="email"
-                              type="email"
-                              value={this.state.email}
-                              onChange={this.handleChange}
-                              className="form-control"
-                              id="emailImput"
-                              placeholder="ex: Joan's Taco Tuesday"
-                          />
-                          */}
-                            </div>
-                        </div>
-                        <div className="form-group">
-                            <label for="numberOfGuests">Number of Guests</label>
-                            <div>
-                                <Select
-                                    labelId="demo-simple-select-filled-label"
-                                    id="demo-simple-select-filled"
-                                    value={this.state.name}
-                                    onChange={this.handleChange}
-                                >
-                                    <MenuItem value="">
-                                        <em>None</em>
-                                    </MenuItem>
-                                    <MenuItem value={1}>1</MenuItem>
-                                    <MenuItem value={2}>2</MenuItem>
-                                    <MenuItem value={3}>3</MenuItem>
-                                    <MenuItem value={4}>4</MenuItem>
-                                    <MenuItem value={5}>5</MenuItem>
-                                </Select>
-
-                                {/** 
-                          <input
-                              name="email"
-                              type="email"
-                              value={this.state.email}
-                              onChange={this.handleChange}
-                              className="form-control"
-                              id="emailImput"
-                              placeholder="ex: Joan's Taco Tuesday"
-                          />
-
-                          */}
-                            </div>
-                        </div>
-                        <div className="form-group">
-                            <label for="fee">Fee/Person</label>
-                            <div>
-                                <TextField
-                                    id="outlined-basic"
-                                    label="Outlined"
-                                    variant="outlined"
-                                />
-
-                                {/** 
-                          <input
-                              name="email"
-                              type="email"
-                              value={this.state.email}
-                              onChange={this.handleChange}
-                              className="form-control"
-                              id="emailImput"
-                              placeholder="ex: Joan's Taco Tuesday"
-                          /> */}
-                            </div>
-                        </div>
-                        <div className="form-group">
-                            <label for="emailImput">
-                                Invitation expires in:
-                            </label>
-                            <div>
-                                <Select
-                                    labelId="demo-simple-select-filled-label"
-                                    id="demo-simple-select-filled"
-                                    value={this.state.name}
-                                    onChange={this.handleChange}
-                                >
-                                    <MenuItem value="">
-                                        <em>None</em>
-                                    </MenuItem>
-                                    <MenuItem value={1}>1 Day</MenuItem>
-                                    <MenuItem value={2}>2 Days</MenuItem>
-                                    <MenuItem value={3}>3 Days</MenuItem>
-                                    <MenuItem value={4}>4 Days</MenuItem>
-                                    <MenuItem value={5}>5 Days</MenuItem>
-                                </Select>
-
-                                {/** 
-                          <input
-                              name="email"
-                              type="email"
-                              value={this.state.email}
-                              onChange={this.handleChange}
-                              className="form-control"
-                              id="emailImput"
-                              placeholder="ex: Joan's Taco Tuesday"
-                          /> **/}
-                            </div>
-                        </div>
-                        <Button variant="contained" color="primary">
-                            Submit
-                        </Button>
-                    </form>
-                </div>
-            </Card>
-        )
-    }
+                    </div>
+                </Card>
+                <p id="loading" style={{ display: 'none' }}>
+                    Loading...
+                </p>
+            </Grid>
+        </Grid>
+    )
 }

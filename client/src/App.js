@@ -1,36 +1,47 @@
-import logo from './logo.svg'
+import React from 'react'
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
+import { Home } from './Home'
+import { AccountPage } from './pages/Account/AccountPage'
 import './App.css'
-import React, { Component } from 'react'
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
-import MenuItem from '@material-ui/core/MenuItem'
-import FormHelperText from '@material-ui/core/FormHelperText'
-import FormControl from '@material-ui/core/FormControl'
-import Select from '@material-ui/core/Select'
-import Card from '@material-ui/core/Card'
-import CardActions from '@material-ui/core/CardActions'
-import CardContent from '@material-ui/core/CardContent'
+import { NavBar } from './components/NavBar'
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
+import orange from '@material-ui/core/colors/orange'
+import { MealCreation } from './pages/MealCreation'
 
-import {
-    BrowserRouter as Router,
-    Route,
-    Switch,
-    Link,
-    Redirect,
-} from 'react-router-dom'
+const theme = createMuiTheme({
+    palette: {
+        primary: {
+            light: orange[100],
+            main: orange[500],
+            dark: orange[700],
+            contrastText: '#2F4858',
+        },
+        secondary: {
+            main: '#2F4858',
+        },
+    },
+})
 
-//Pages
-import MealDisplay from './pages/MealDisplay' ///< index.jsx will be automatically imported
-import MealCreation from './pages/MealCreation'
-
-function App() {
+export const App = () => {
     return (
-        <div className="App">
+        <ThemeProvider theme={theme}>
             <Router>
-                <Route exact path="/MealDisplay" component={MealDisplay} />
-                <Route exact path="/MealCreation" component={MealCreation} />
+                <NavBar />
+                {/* A <Switch> looks through its children <Route>s and
+            renders the first one that matches the current URL. */}
+                <Switch>
+                    <Route exact path="/">
+                        <Home />
+                    </Route>
+                    <Route exact path="/account">
+                        <AccountPage />
+                    </Route>
+                    <Route exact path="/meals/new">
+                        <MealCreation />
+                    </Route>
+                </Switch>
             </Router>
-        </div>
+        </ThemeProvider>
     )
 }
 
