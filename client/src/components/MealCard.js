@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function MealCard() {
     const classes = useStyles()
+    // eslint-disable-next-line
     const [expanded, setExpanded] = React.useState(false)
 
     return (
