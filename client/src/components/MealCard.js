@@ -23,23 +23,11 @@ import FastfoodIcon from '@material-ui/icons/Fastfood'
 const useStyles = makeStyles((theme) => ({
     root: {
         maxWidth: 345,
+        flexGrow: 1,
     },
     media: {
         height: 0,
         paddingTop: '56.25%', // 16:9
-    },
-    expand: {
-        transform: 'rotate(0deg)',
-        marginLeft: 'auto',
-        transition: theme.transitions.create('transform', {
-            duration: theme.transitions.duration.shortest,
-        }),
-    },
-    expandOpen: {
-        transform: 'rotate(180deg)',
-    },
-    avatar: {
-        backgroundColor: red[500],
     },
 }))
 
@@ -58,14 +46,7 @@ export default function MealCard() {
                 image="https://miro.medium.com/max/1226/1*zGmA-8Fi6gZt7-je1_MOLQ.png"
                 title="Paella dish"
             />
-            <CardHeader
-                action={
-                    <IconButton aria-label="settings">
-                        <MoreVertIcon />
-                    </IconButton>
-                }
-                title="Italian Night"
-            />
+            <CardHeader title="Italian Night" />
 
             <CardContent>
                 <Typography title>Date:</Typography>
@@ -76,35 +57,16 @@ export default function MealCard() {
                     Join Meal
                 </Button>
                 <Typography variant="body2" color="textSecondary" component="p">
-                    This impressive paella is a perfect party dish and a fun
-                    meal to cook together with your guests. Add 1 cup of frozen
-                    peas along with the mussels, if you like.
+                    This dinner will have you so hungry!
                 </Typography>
             </CardContent>
-            <CardActions disableSpacing>
-                <IconButton aria-label="add to favorites">
-                    <FastfoodIcon></FastfoodIcon>
-                </IconButton>
 
-                <IconButton
-                    className={clsx(classes.expand, {
-                        [classes.expandOpen]: expanded,
-                    })}
-                    onClick={handleExpandClick}
-                    aria-expanded={expanded}
-                    aria-label="show more"
-                >
-                    <ExpandMoreIcon />
-                </IconButton>
-            </CardActions>
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
-                <CardContent>
-                    <Typography paragraph>Method:</Typography>
-                    <Typography paragraph>Appetizer</Typography>
-                    <Typography paragraph>Main Entree</Typography>
-                    <Typography>Dessert</Typography>
-                </CardContent>
-            </Collapse>
+            <CardContent>
+                <Typography paragraph>Method:</Typography>
+                <Typography paragraph>Appetizer</Typography>
+                <Typography paragraph>Main Entree</Typography>
+                <Typography>Dessert</Typography>
+            </CardContent>
         </Card>
     )
 }
