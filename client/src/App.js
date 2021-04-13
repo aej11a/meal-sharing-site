@@ -22,7 +22,6 @@ import {
 //Pages
 import MealDisplay from './pages/MealDisplay' ///< index.jsx will be automatically imported
 import MealCreation from './pages/MealCreation'
-import Title from './components/Title'
 
 function App() {
     return (
