@@ -56,6 +56,11 @@ export const NavBar = () => {
                     primary="Account"
                     icon={<AccountBoxIcon />}
                 />
+                <ListItemLink
+                    to="/meals/display"
+                    primary="MealsDisplay"
+                    icon={<AccountBoxIcon />}
+                />
             </Toolbar>
         </AppBar>
     )

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Title from './Title'
 import Image from './Image'
+import { db } from '../firebase'
 import { makeStyles } from '@material-ui/core/styles'
 import clsx from 'clsx'
 import Card from '@material-ui/core/Card'
@@ -35,28 +36,34 @@ export default function MealCard() {
     const classes = useStyles()
     const [expanded, setExpanded] = React.useState(false)
 
+    /*
+    Functionality for get data from firestore
+    Note: the .doc() has a static value for testing purposes.
+        We should replace that with a dynamic value at some point,
+    */
+    var data
+
+    const docRef = db.collection('meals').doc('aEpQG38Kws4GsCwikhhH')
+
+    docRef
+        .get()
+        .then((doc) => {
+            if (doc.exists) {
+                data = doc.data()
+                console.log(data)
+                console.log('Document data:', doc.data())
+            } else {
+                console.log('No such document!')
+            }
+        })
+        .catch(function (error) {
+            console.log('Error getting document:', error)
+        })
+
+    console.log(data)
+
     const handleExpandClick = () => {
         setExpanded(!expanded)
-
-        /*
-        Functionality for get data from firestore
-        Note: the .doc() has a static value for testing purposes.
-            We should replace that with a dynamic value at some point,
-        */
-        const docRef = database.collection('meals').doc('aEpQG38Kws4GsCwikhhH')
-
-        docRef
-            .get()
-            .then((doc) => {
-                if (doc.exists) {
-                    console.log('Document data:', doc.data())
-                } else {
-                    console.log('No such document!')
-                }
-            })
-            .catch(function (error) {
-                console.log('Error getting document:', error)
-            })
     }
 
     return (
