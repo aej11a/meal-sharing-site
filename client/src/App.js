@@ -59,7 +59,7 @@ export const App = () => {
                         <Route exact path="/meals/new">
                             <MealCreation />
                         </Route>
-                        <Route exact path="/meals/display">
+                        <Route exact path="/meals/display/:mealId">
                             <MealDisplay />
                         </Route>
                     </Switch>

@@ -29,7 +29,7 @@ const TextField = (props) => (
     />
 )
 
-const DishDisplay = ({ dish, removeDish }) => {
+export const DishDisplay = ({ dish, removeDish }) => {
     return (
         <Card>
             <CardContent>
@@ -39,11 +39,13 @@ const DishDisplay = ({ dish, removeDish }) => {
                 <h3>{dish.dishName}</h3>
                 <p>{dish.dishIngredients}</p>
             </CardContent>
-            <CardActions>
-                <Button size="small" onClick={removeDish}>
-                    Remove
-                </Button>
-            </CardActions>
+            {removeDish && (
+                <CardActions>
+                    <Button size="small" onClick={removeDish}>
+                        Remove
+                    </Button>
+                </CardActions>
+            )}
         </Card>
     )
 }
