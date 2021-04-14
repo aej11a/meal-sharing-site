@@ -31,10 +31,7 @@ export default function MealCard() {
             Functionality for get data from firestore
             */
         try {
-            const docRef = await db
-                .collection('meals')
-                .doc('aEpQG38Kws4GsCwikhhH')
-                .get()
+            const docRef = await db.collection('meals').doc(mealId).get()
             if (docRef.exists) {
                 setMealData(docRef.data())
             } else {
