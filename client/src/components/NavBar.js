@@ -9,7 +9,6 @@ import {
 } from '@material-ui/core'
 import { useUser } from '../App'
 import { Link as RouterLink } from 'react-router-dom'
-import HomeIcon from '@material-ui/icons/Home'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
 import AddBoxIcon from '@material-ui/icons/AddBox'
 
@@ -42,26 +41,29 @@ export const NavBar = () => {
     return (
         <AppBar position="static">
             <Toolbar>
-                <Typography
-                    variant="h6"
-                    style={{ marginRight: 50, flexGrow: 1 }}
-                >
-                    Meal Sharing App
+                <Typography variant="h6" style={{ marginRight: 20 }}>
+                    <RouterLink
+                        to="/"
+                        style={{
+                            textDecoration: 'none',
+                            color: '#2F4858',
+                            fontWeight: 700,
+                        }}
+                    >
+                        cookout!
+                    </RouterLink>
                 </Typography>
-                <ListItemLink to="/" primary="Home" icon={<HomeIcon />} />
                 <ListItemLink
                     to="/account"
                     primary="Account"
                     icon={<AccountBoxIcon />}
                 />
                 {user && (
-                    <>
-                        <ListItemLink
-                            to="/meals/new"
-                            primary="Create Meal"
-                            icon={<AddBoxIcon />}
-                        />
-                    </>
+                    <ListItemLink
+                        to="/meals/new"
+                        primary="Create Meal"
+                        icon={<AddBoxIcon />}
+                    />
                 )}
             </Toolbar>
         </AppBar>
