@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import firebase from 'firebase'
 import Button from '@material-ui/core/Button'
 import MTextField from '@material-ui/core/TextField'
 import MSelect from '@material-ui/core/Select'
@@ -10,6 +11,10 @@ import MenuItem from '@material-ui/core/MenuItem'
 import InputLabel from '@material-ui/core/InputLabel'
 import { db } from '../firebase'
 import { getCoordinates } from '../forward-geocoding'
+import { useUser } from '../App'
+import { useHistory } from 'react-router-dom'
+
+require('firebase/firestore')
 
 const Select = (props) => (
     <MSelect
@@ -25,7 +30,6 @@ const TextField = (props) => (
 )
 
 const DishDisplay = ({ dish, removeDish }) => {
-    console.log(dish)
     return (
         <Card>
             <CardContent>
@@ -51,9 +55,14 @@ export const MealCreationForm = () => {
     const [course, setCourse] = useState()
     const [dishName, setDishName] = useState()
     const [dishIngredients, setDishIngredients] = useState()
+    const history = useHistory()
+    const { user } = useUser()
+
+    if (!user) {
+        history.push('/account')
+    }
 
     const addDish = () => {
-        console.log()
         setDishes([
             ...dishes,
             {
@@ -78,6 +87,7 @@ export const MealCreationForm = () => {
         // Don't use .doc(), so that firebase will make an ID for us
         db.collection('meals')
             .add({
+                hostId: user.uid,
                 name: event.target.mealname.value,
                 dishes: dishes.map((dish) => {
                     dish.dishIngredients = dish.dishIngredients
@@ -94,8 +104,22 @@ export const MealCreationForm = () => {
             })
             .then((docRef) => {
                 console.log('Doc written with ID: ', docRef.id)
-                document.getElementById('create-form').style.display = 'block'
-                document.getElementById('loading').style.display = 'none'
+                db.collection('users')
+                    .doc(user.uid)
+                    .update({
+                        hostingMealIds: firebase.firestore.FieldValue.arrayUnion(
+                            docRef.id
+                        ),
+                    })
+                    .then(() => {
+                        document.getElementById('create-form').style.display =
+                            'block'
+                        document.getElementById('loading').style.display =
+                            'none'
+                        event.target.reset()
+                        setDishes([])
+                        alert('Your meal has been posted!')
+                    })
             })
             .catch((error) => {
                 console.error('Error adding document: ', error)
