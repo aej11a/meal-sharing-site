@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { db } from '../firebase'
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
@@ -7,8 +7,10 @@ import CardMedia from '@material-ui/core/CardMedia'
 import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
+import { useParams } from 'react-router'
+import { DishDisplay } from './MealCreationForm'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     root: {
         maxWidth: 345,
         flexGrow: 1,
@@ -21,19 +23,20 @@ const useStyles = makeStyles((theme) => ({
 
 export default function MealCard() {
     const classes = useStyles()
-    
+    const [mealData, setMealData] = useState()
+    const { mealId } = useParams()
 
-
-    useEffect(() => {
+    useEffect(async () => {
         /*
             Functionality for get data from firestore
-            Note: the .doc() has a static value for testing purposes.
-                We should replace that with a dynamic value at some point,
             */
         try {
-            const docRef = await db.collection('meals').doc('aEpQG38Kws4GsCwikhhH').get();
+            const docRef = await db
+                .collection('meals')
+                .doc('aEpQG38Kws4GsCwikhhH')
+                .get()
             if (docRef.exists) {
-                const data = docRef.data()
+                setMealData(docRef.data())
             } else {
                 console.log('No such document!')
             }
@@ -42,34 +45,56 @@ export default function MealCard() {
         }
     }, [mealId])
 
-return (
+    const mealDate =
+        mealData && mealData.time ? new Date(mealData.time) : undefined
+    const expiration =
+        mealData && mealData.expire ? new Date(mealData.expire) : undefined
+    const getDateString = (date) => {
+        return date.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+        })
+    }
+
+    return (
         <Card className={classes.root}>
-            <CardMedia
-                className={classes.media}
-                image="https://miro.medium.com/max/1226/1*zGmA-8Fi6gZt7-je1_MOLQ.png"
-                title="Paella dish"
-            />
-            <CardHeader title="Italian Night" />
+            {!mealData ? (
+                <p>Loading...</p>
+            ) : (
+                <>
+                    <CardMedia
+                        className={classes.media}
+                        image="https://miro.medium.com/max/1226/1*zGmA-8Fi6gZt7-je1_MOLQ.png"
+                        title="Paella dish"
+                    />
+                    <CardHeader title={mealData.name} />
 
-            <CardContent>
-                <Typography title>Date:</Typography>
-                <Typography title>Host:</Typography>
-                <Typography title>Location:</Typography>
-                <Typography title>Distance:</Typography>
-                <Button variant="contained" color="primary">
-                    Join Meal
-                </Button>
-                <Typography variant="body2" color="textSecondary" component="p">
-                    This dinner will have you so hungry!
-                </Typography>
-            </CardContent>
+                    <CardContent>
+                        <Typography title>{getDateString(mealDate)}</Typography>
+                        <Typography title>Host: TODO</Typography>
+                        <Typography title>{mealData.location}</Typography>
+                        <Typography title>Distance: TODO</Typography>
+                        <Typography title>
+                            Expires {getDateString(expiration)}
+                        </Typography>
+                        <Button variant="contained" color="primary">
+                            Join Meal
+                        </Button>
+                    </CardContent>
 
-            <CardContent>
-                <Typography paragraph>Method:</Typography>
-                <Typography paragraph>Appetizer</Typography>
-                <Typography paragraph>Main Entree</Typography>
-                <Typography>Dessert</Typography>
-            </CardContent>
+                    <CardContent>
+                        <h3>Dishes</h3>
+                        {mealData.dishes.map((dish) => (
+                            <DishDisplay dish={dish} />
+                        ))}
+                    </CardContent>
+                </>
+            )}
         </Card>
     )
 }
