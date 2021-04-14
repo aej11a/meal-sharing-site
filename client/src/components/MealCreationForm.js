@@ -120,7 +120,11 @@ export const MealCreationForm = () => {
                             'none'
                         event.target.reset()
                         setDishes([])
-                        alert('Your meal has been posted!')
+                        alert(
+                            'Your meal has been posted! (Testing: It has the ID ' +
+                                docRef.id +
+                                ')'
+                        )
                     })
             })
             .catch((error) => {
