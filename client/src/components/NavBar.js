@@ -7,11 +7,11 @@ import {
     ListItemIcon,
     ListItemText,
 } from '@material-ui/core'
-import { useAuthState } from 'react-firebase-hooks/auth'
+import { useUser } from '../App'
 import { Link as RouterLink } from 'react-router-dom'
 import HomeIcon from '@material-ui/icons/Home'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
-import { firebase } from '../firebase'
+import AddBoxIcon from '@material-ui/icons/AddBox'
 
 function ListItemLink(props) {
     const { icon, primary, to } = props
@@ -37,8 +37,7 @@ function ListItemLink(props) {
 }
 
 export const NavBar = () => {
-    // eslint-disable-next-line
-    const [user, loading, error] = useAuthState(firebase.auth())
+    const { user } = useUser()
 
     return (
         <AppBar position="static">
@@ -55,6 +54,15 @@ export const NavBar = () => {
                     primary="Account"
                     icon={<AccountBoxIcon />}
                 />
+                {user && (
+                    <>
+                        <ListItemLink
+                            to="/meals/new"
+                            primary="Create Meal"
+                            icon={<AddBoxIcon />}
+                        />
+                    </>
+                )}
             </Toolbar>
         </AppBar>
     )

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, createContext, useContext } from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { Home } from './Home'
 import { AccountPage } from './pages/Account/AccountPage'
@@ -8,6 +8,7 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
 import orange from '@material-ui/core/colors/orange'
 import { MealCreation } from './pages/MealCreation'
 import { MealDisplay } from './pages/MealDisplay'
+import { firebase } from './firebase'
 
 const theme = createMuiTheme({
     palette: {
@@ -23,28 +24,47 @@ const theme = createMuiTheme({
     },
 })
 
+const UserStore = createContext()
+export const useUser = () => useContext(UserStore)
+const UserProvider = ({ children }) => {
+    const [user, setUser] = useState()
+
+    const auth = firebase.auth()
+    const logout = () => {
+        auth.signOut()
+        setUser(null)
+    }
+    return (
+        <UserStore.Provider value={{ user, setUser, auth, logout }}>
+            {children}
+        </UserStore.Provider>
+    )
+}
+
 export const App = () => {
     return (
         <ThemeProvider theme={theme}>
-            <Router>
-                <NavBar />
-                {/* A <Switch> looks through its children <Route>s and
+            <UserProvider>
+                <Router>
+                    <NavBar />
+                    {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
-                <Switch>
-                    <Route exact path="/">
-                        <Home />
-                    </Route>
-                    <Route exact path="/account">
-                        <AccountPage />
-                    </Route>
-                    <Route exact path="/meals/new">
-                        <MealCreation />
-                    </Route>
-                    <Route exact path="/meals/display">
-                        <MealDisplay />
-                    </Route>
-                </Switch>
-            </Router>
+                    <Switch>
+                        <Route exact path="/">
+                            <Home />
+                        </Route>
+                        <Route exact path="/account">
+                            <AccountPage />
+                        </Route>
+                        <Route exact path="/meals/new">
+                            <MealCreation />
+                        </Route>
+                        <Route exact path="/meals/display">
+                            <MealDisplay />
+                        </Route>
+                    </Switch>
+                </Router>
+            </UserProvider>
         </ThemeProvider>
     )
 }
