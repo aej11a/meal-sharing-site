@@ -1,26 +1,50 @@
 import React, { useState } from 'react'
+import { useUser } from '../../App'
 import { ButtonGroup, Button, TextField, Grid } from '@material-ui/core'
-import {
-    useCreateUserWithEmailAndPassword as useCreateUser,
-    useSignInWithEmailAndPassword as useSignIn,
-    useAuthState,
-} from 'react-firebase-hooks/auth'
-import { firebase } from '../../firebase'
-const auth = firebase.auth()
-const logout = () => {
-    firebase.auth().signOut()
-}
+import { db } from '../../firebase'
 
-const createUser = async ({ email, password, displayName }) => {
+const createUser = async ({ email, password, displayName, auth, setUser }) => {
     return await auth
         .createUserWithEmailAndPassword(email, password)
         .then((credential) => {
-            console.log(credential)
-            credential.user.updateProfile({ displayName })
+            db.collection('users')
+                .doc(credential.user.uid)
+                .set({
+                    uid: credential.user.uid,
+                    email: credential.user.email,
+                    name: displayName,
+                })
+                .then(() =>
+                    setUser({
+                        uid: credential.user.uid,
+                        email: credential.user.email,
+                        name: displayName,
+                    })
+                )
+        })
+}
+
+const signIn = async ({ email, password, auth, setUser }) => {
+    return await auth
+        .signInWithEmailAndPassword(email, password)
+        .then((credential) => {
+            db.collection('users')
+                .doc(credential.user.uid)
+                .get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const user = doc.data()
+                        setUser(user)
+                    } else {
+                        // doc.data() will be undefined in this case
+                        console.log('No such document!')
+                    }
+                })
         })
 }
 
 const CreateAccount = () => {
+    const { auth, setUser } = useUser()
     const [createState, setCreateState] = useState({
         loading: false,
         data: null,
@@ -34,21 +58,19 @@ const CreateAccount = () => {
             <form
                 onSubmit={async (e) => {
                     e.preventDefault()
-                    console.log({
-                        email: e.target[0].value,
-                        password: e.target[1].value,
-                        displayName:
-                            e.target[2].value + ' ' + e.target[3].value,
-                    })
                     try {
                         setCreateState({ ...createState, loading: true })
                         setCreateState({
                             ...createState,
                             data: await createUser({
-                                email: e.target[0].value,
-                                password: e.target[1].value,
+                                auth,
+                                email: e.target.email.value,
+                                password: e.target.password.value,
                                 displayName:
-                                    e.target[2].value + e.target[3].value,
+                                    e.target.firstname.value +
+                                    ' ' +
+                                    e.target.lastname.value,
+                                setUser,
                             }),
                             loading: false,
                         })
@@ -62,12 +84,18 @@ const CreateAccount = () => {
                 }}
             >
                 <div style={{ margin: 10 }}>
-                    <TextField variant="outlined" label="email" type="text" />
+                    <TextField
+                        variant="outlined"
+                        label="email"
+                        name="email"
+                        type="text"
+                    />
                 </div>
                 <div style={{ margin: 10 }}>
                     <TextField
                         variant="outlined"
                         label="password"
+                        name="password"
                         type="password"
                     />
                 </div>
@@ -75,6 +103,7 @@ const CreateAccount = () => {
                     <TextField
                         variant="outlined"
                         label="firstname"
+                        name="firstname"
                         type="text"
                     />
                 </div>
@@ -82,6 +111,7 @@ const CreateAccount = () => {
                     <TextField
                         variant="outlined"
                         label="lastname"
+                        name="lastname"
                         type="text"
                     />
                 </div>
@@ -98,34 +128,34 @@ const CreateAccount = () => {
 }
 
 const SignIn = () => {
-    const [
-        signInWithEmailAndPassword,
-        signedInUser,
-        signinLoading,
-        signinError,
-    ] = useSignIn(auth)
-
-    return signinLoading ? (
-        'Loading...'
-    ) : (
+    const { auth, setUser } = useUser()
+    return (
         <>
             <form
                 onSubmit={(e) => {
                     e.preventDefault()
-                    signInWithEmailAndPassword(
-                        e.target[0].value,
-                        e.target[1].value
-                    )
+                    signIn({
+                        email: e.target.email.value,
+                        password: e.target.password.value,
+                        auth,
+                        setUser,
+                    })
                 }}
             >
                 <div style={{ margin: 10 }}>
-                    <TextField variant="outlined" label="email" type="text" />
+                    <TextField
+                        variant="outlined"
+                        label="email"
+                        type="text"
+                        name="email"
+                    />
                 </div>
                 <div style={{ margin: 10 }}>
                     <TextField
                         variant="outlined"
                         label="password"
                         type="password"
+                        name="password"
                     />
                 </div>
                 <Button
@@ -141,7 +171,7 @@ const SignIn = () => {
 }
 
 export const AccountPage = () => {
-    const [user, loading, error] = useAuthState(auth)
+    const { user, logout } = useUser()
 
     // create an enum to keep states clean
     const DISPLAY_STATES = { create: 0, signin: 1 }
@@ -158,14 +188,14 @@ export const AccountPage = () => {
     const switchToCreate = () => setDisplayedTab(DISPLAY_STATES.create)
     const switchToSignIn = () => setDisplayedTab(DISPLAY_STATES.signin)
 
-    if (user)
+    if (user) {
         return (
             <div>
-                <p>You are signed in as {user.providerData[0].displayName}</p>
+                <p>You are signed in as {user && user.name}</p>
                 <Button onClick={logout}>Log Out</Button>
             </div>
         )
-    else
+    } else
         return (
             <Grid
                 container
