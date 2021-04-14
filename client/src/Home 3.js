@@ -1,10 +1,11 @@
 import React from 'react'
-import CenteredGrid from './components/CenteredGrid'
 
 export const Home = () => {
     return (
         <div>
-            <CenteredGrid></CenteredGrid>
+            <div>MAP HERE</div>
+
+            <div>MEALS LIST HERE</div>
         </div>
     )
 }
