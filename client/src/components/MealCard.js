@@ -26,20 +26,23 @@ export default function MealCard() {
     const [mealData, setMealData] = useState()
     const { mealId } = useParams()
 
-    useEffect(async () => {
-        /*
-            Functionality for get data from firestore
-            */
-        try {
-            const docRef = await db.collection('meals').doc(mealId).get()
-            if (docRef.exists) {
-                setMealData(docRef.data())
-            } else {
-                console.log('No such document!')
+    useEffect(() => {
+        const fetchData = async () => {
+            /*
+                Functionality for get data from firestore
+                */
+            try {
+                const docRef = await db.collection('meals').doc(mealId).get()
+                if (docRef.exists) {
+                    setMealData(docRef.data())
+                } else {
+                    console.log('No such document!')
+                }
+            } catch (error) {
+                console.log('Error getting document:', error)
             }
-        } catch (error) {
-            console.log('Error getting document:', error)
         }
+        fetchData()
     }, [mealId])
 
     const mealDate =
