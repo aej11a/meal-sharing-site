@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CenteredGrid() {
     const classes = useStyles()
-    const [expanded, setExpanded] = React.useState(false)
+    const [expanded] = React.useState(false)
 
     return (
         <div className={classes.root}>
