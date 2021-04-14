@@ -118,6 +118,7 @@ export const MealCreationForm = () => {
                             'none'
                         event.target.reset()
                         setDishes([])
+                        alert('Your meal has been posted!')
                     })
             })
             .catch((error) => {
