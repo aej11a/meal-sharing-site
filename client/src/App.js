@@ -8,7 +8,7 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
 import orange from '@material-ui/core/colors/orange'
 import { MealCreation } from './pages/MealCreation'
 import { MealDisplay } from './pages/MealDisplay'
-import { firebase } from './firebase'
+import { firebase, db } from './firebase'
 
 const theme = createMuiTheme({
     palette: {
@@ -30,6 +30,21 @@ const UserProvider = ({ children }) => {
     const [user, setUser] = useState()
 
     const auth = firebase.auth()
+    auth.onAuthStateChanged((authUser) => {
+        db.collection('users')
+            .doc(authUser.uid)
+            .get()
+            .then((doc) => {
+                if (doc.exists) {
+                    const user = doc.data()
+                    setUser(user)
+                } else {
+                    // doc.data() will be undefined in this case
+                    console.log('No such document!')
+                }
+            })
+        setUser(user)
+    })
     const logout = () => {
         auth.signOut()
         setUser(null)

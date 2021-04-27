@@ -25,6 +25,7 @@ export default function MealCard() {
     const classes = useStyles()
     const [mealData, setMealData] = useState()
     const { mealId } = useParams()
+    const [hostData, setHostData] = useState()
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,9 +33,20 @@ export default function MealCard() {
                 Functionality for get data from firestore
                 */
             try {
-                const docRef = await db.collection('meals').doc(mealId).get()
-                if (docRef.exists) {
-                    setMealData(docRef.data())
+                const mealRes = await db.collection('meals').doc(mealId).get()
+                if (mealRes.exists) {
+                    setMealData(mealRes.data())
+                    if (mealRes.data().hostId) {
+                        const userRes = await db
+                            .collection('users')
+                            .doc(mealRes.data().hostId)
+                            .get()
+                        if (userRes.exists) {
+                            setHostData(userRes.data())
+                        } else {
+                            console.log('No such document!')
+                        }
+                    }
                 } else {
                     console.log('No such document!')
                 }
