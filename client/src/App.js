@@ -31,19 +31,20 @@ const UserProvider = ({ children }) => {
 
     const auth = firebase.auth()
     auth.onAuthStateChanged((authUser) => {
-        db.collection('users')
-            .doc(authUser.uid)
-            .get()
-            .then((doc) => {
-                if (doc.exists) {
-                    const user = doc.data()
-                    setUser(user)
-                } else {
-                    // doc.data() will be undefined in this case
-                    console.log('No such document!')
-                }
-            })
-        setUser(user)
+        if (!user) {
+            db.collection('users')
+                .doc(authUser.uid)
+                .get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const user = doc.data()
+                        setUser(user)
+                    } else {
+                        // doc.data() will be undefined in this case
+                        console.log('No such document!')
+                    }
+                })
+        }
     })
     const logout = () => {
         auth.signOut()
