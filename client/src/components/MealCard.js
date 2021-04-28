@@ -5,10 +5,14 @@ import Card from '@material-ui/core/Card'
 import CardHeader from '@material-ui/core/CardHeader'
 import CardMedia from '@material-ui/core/CardMedia'
 import CardContent from '@material-ui/core/CardContent'
-import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import { useParams } from 'react-router'
 import { DishDisplay } from './MealCreationForm'
+import AccountCircleIcon from '@material-ui/icons/AccountCircle'
+import LocationPinIcon from '@material-ui/icons/LocationOn'
+import CalendarIcon from '@material-ui/icons/Today'
+import DistanceIcon from '@material-ui/icons/SpaceBar'
+import ExpirationIcon from '@material-ui/icons/TimerOff'
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -25,6 +29,7 @@ export default function MealCard() {
     const classes = useStyles()
     const [mealData, setMealData] = useState()
     const { mealId } = useParams()
+    const [hostData, setHostData] = useState()
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,9 +37,20 @@ export default function MealCard() {
                 Functionality for get data from firestore
                 */
             try {
-                const docRef = await db.collection('meals').doc(mealId).get()
-                if (docRef.exists) {
-                    setMealData(docRef.data())
+                const mealRes = await db.collection('meals').doc(mealId).get()
+                if (mealRes.exists) {
+                    setMealData(mealRes.data())
+                    if (mealRes.data().hostId) {
+                        const userRes = await db
+                            .collection('users')
+                            .doc(mealRes.data().hostId)
+                            .get()
+                        if (userRes.exists) {
+                            setHostData(userRes.data())
+                        } else {
+                            console.log('No such document!')
+                        }
+                    }
                 } else {
                     console.log('No such document!')
                 }
@@ -73,16 +89,29 @@ export default function MealCard() {
                         title="Paella dish"
                     />
                     <CardHeader title={mealData.name} />
-
                     <CardContent>
-                        <Typography title>{getDateString(mealDate)}</Typography>
-                        <Typography title>Host: TODO</Typography>
-                        <Typography title>{mealData.location}</Typography>
-                        <Typography title>Distance: TODO</Typography>
-                        <Typography title>
-                            Expires {getDateString(expiration)}
-                        </Typography>
-                        <Button variant="contained" color="primary">
+                        <div
+                            style={{
+                                display: 'grid',
+                                gridTemplateColumns: '0.1fr 1fr',
+                            }}
+                        >
+                            <AccountCircleIcon />
+                            <span>{hostData && hostData.name}</span>
+                            <CalendarIcon />
+                            <span>{getDateString(mealDate)}</span>
+                            <LocationPinIcon />
+                            <span>{mealData.location}</span>
+                            <DistanceIcon />
+                            <span>DISTANCE TODO</span>
+                            <ExpirationIcon />
+                            <span>Expires {getDateString(expiration)}</span>
+                        </div>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            style={{ float: 'right' }}
+                        >
                             Join Meal
                         </Button>
                     </CardContent>
