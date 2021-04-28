@@ -88,7 +88,19 @@ export default function MealCard() {
         <>
             <CardMedia
                 className={classes.media}
-                image="https://miro.medium.com/max/1226/1*zGmA-8Fi6gZt7-je1_MOLQ.png"
+                //image="https://miro.medium.com/max/1226/1*zGmA-8Fi6gZt7-je1_MOLQ.png"
+                component={() => (
+                    <iframe
+                        url={mealData.map_url}
+                        width="450px"
+                        height="450px"
+                        id="myId"
+                        title="cardMap"
+                        className="myClassname"
+                        display="initial"
+                        position="relative"
+                    />
+                )}
                 title="Paella dish"
             />
             <CardHeader title={mealData.name} />

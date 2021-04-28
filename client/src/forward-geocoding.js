@@ -6,6 +6,7 @@ export async function getCoordinates(address) {
         return {
             latitude: apiCall.data.data[0].latitude,
             longitude: apiCall.data.data[0].longitude,
+            map_url: apiCall.data.data[0].map_url,
         }
     } catch (error) {
         throw error
@@ -17,5 +18,5 @@ async function getApiCall(address) {
         access_key: process.env.REACT_APP_GEOCODE_KEY,
         query: address,
     }
-    return axios.get('https://api.positionstack.com/v1/forward', { params })
+    return axios.get('http://api.positionstack.com/v1/forward', { params })
 }
