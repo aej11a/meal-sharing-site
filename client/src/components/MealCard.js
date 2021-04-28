@@ -15,6 +15,9 @@ import CalendarIcon from '@material-ui/icons/Today'
 import DistanceIcon from '@material-ui/icons/SpaceBar'
 import ExpirationIcon from '@material-ui/icons/TimerOff'
 import { useViewport } from '../use-viewport'
+import { newRequest, searchRequest } from './MealInviteHandler'
+import { useUser } from '../App'
+import { useHistory } from 'react-router-dom'
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -35,6 +38,14 @@ export default function MealCard() {
     const { mealId } = useParams()
     const [hostData, setHostData] = useState()
     const { isMobile } = useViewport()
+    const { user } = useUser()
+    const history = useHistory()
+
+    /*
+    if (!user) {
+        history.push('/account')
+    }
+    */
 
     useEffect(() => {
         const fetchData = async () => {
@@ -114,6 +125,11 @@ export default function MealCard() {
                     variant="contained"
                     color="primary"
                     style={{ float: 'right' }}
+                    onClick={() => {
+                        if (searchRequest(mealData.hostId, mealId, user.uid)) {
+                            newRequest(mealData.hostId, mealId, user.uid)
+                        }
+                    }}
                 >
                     Join Meal
                 </Button>
