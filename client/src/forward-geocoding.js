@@ -18,5 +18,5 @@ async function getApiCall(address) {
         access_key: process.env.REACT_APP_GEOCODE_KEY,
         query: address,
     }
-    return axios.get('http://api.positionstack.com/v1/forward', { params })
+    return axios.get('https://api.positionstack.com/v1/forward', { params })
 }
