@@ -39,6 +39,7 @@ export default function MealCard() {
     const [hostData, setHostData] = useState()
     const { isMobile } = useViewport()
     const { user } = useUser()
+    const []
     const history = useHistory()
 
     /*
@@ -125,10 +126,14 @@ export default function MealCard() {
                     variant="contained"
                     color="primary"
                     style={{ float: 'right' }}
-                    onClick={() => {
-                        if (searchRequest(mealData.hostId, mealId, user.uid)) {
+                    onClick={async () => {
+                        const canRequest = await searchRequest(
+                            mealData.hostId,
+                            mealId,
+                            user.uid
+                        )
+                        if (canRequest)
                             newRequest(mealData.hostId, mealId, user.uid)
-                        }
                     }}
                 >
                     Join Meal
