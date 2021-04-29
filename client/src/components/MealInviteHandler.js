@@ -1,5 +1,3 @@
-import { ContactSupportOutlined } from '@material-ui/icons'
-import React from 'react'
 import { db } from '../firebase'
 
 export const newRequest = (hostId, mealId, inviteeId) => {
@@ -38,53 +36,22 @@ export const getRequest = (requestID) => {
     return requestData
 }
 
-export const searchRequest = async (hostId, mealId, inviteeId) => {
+export const doesRequestExist = async (mealId, inviteeId) => {
     try {
+        let foundAMatch = false
         const requestRes = db
             .collection('meal-requests')
             .where('InviteeId', '==', inviteeId)
         const querySnapshot = await requestRes.get()
+        // if we find this meal in the meal requests where this user is invited, return yes, match found
         querySnapshot.forEach((doc) => {
-            if (doc.data().HostId === hostId && doc.data().MealId === mealId) {
-                return true
+            if (doc.data().MealId === mealId) {
+                foundAMatch = true
             }
         })
-        return false
+        return foundAMatch
     } catch (error) {
         console.log(error)
         return null
     }
 }
-
-/*
-export const searchRequest = async (hostId, mealId, inviteeId) => {
-    const queryRequest = () => {
-        let query = []
-        let res
-        const requestRes = db
-            .collection('meal-requests')
-            .where('InviteeId', '==', inviteeId)
-        requestRes
-            .get()
-            .then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                    query.push(doc.data())
-                })
-            })
-            .then((doc) => {
-                if (doc.HostId === hostId && doc.MealId === mealId) {
-                    res = true
-                }
-                res = false
-            })
-        return res
-    }
-
-    const requestRes = queryRequest()
-
-    console.log(requestRes)
-
-    //returns false for debug purposes; should return a variable boolean
-    return false
-}
-*/

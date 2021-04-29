@@ -15,7 +15,7 @@ import CalendarIcon from '@material-ui/icons/Today'
 import DistanceIcon from '@material-ui/icons/SpaceBar'
 import ExpirationIcon from '@material-ui/icons/TimerOff'
 import { useViewport } from '../use-viewport'
-import { newRequest, searchRequest } from './MealInviteHandler'
+import { newRequest, doesRequestExist } from './MealInviteHandler'
 import { useUser } from '../App'
 import { useHistory } from 'react-router-dom'
 
@@ -125,8 +125,8 @@ export default function MealCard() {
                     variant="contained"
                     color="primary"
                     style={{ float: 'right' }}
-                    onClick={() => {
-                        if (!searchRequest(mealData.hostId, mealId, user.uid)) {
+                    onClick={async () => {
+                        if (!(await doesRequestExist(mealId, user.uid))) {
                             newRequest(mealData.hostId, mealId, user.uid)
                         }
                     }}
