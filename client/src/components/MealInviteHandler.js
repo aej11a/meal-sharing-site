@@ -37,14 +37,27 @@ export const getRequest = (requestID) => {
     fetchData()
     return requestData
 }
-/*
-if(doc.data().HostId === hostId && doc.data().MealId === mealId){
-                    return true
-                }
-                return false
-*/
 
-export const searchRequest = (hostId, mealId, inviteeId) => {
+export const searchRequest = async (hostId, mealId, inviteeId) => {
+    try {
+        const requestRes = db
+            .collection('meal-requests')
+            .where('InviteeId', '==', inviteeId)
+        const querySnapshot = await requestRes.get()
+        querySnapshot.forEach((doc) => {
+            if (doc.data().HostId === hostId && doc.data().MealId === mealId) {
+                return true
+            }
+        })
+        return false
+    } catch (error) {
+        console.log(error)
+        return null
+    }
+}
+
+/*
+export const searchRequest = async (hostId, mealId, inviteeId) => {
     const queryRequest = () => {
         let query = []
         let res
@@ -74,3 +87,4 @@ export const searchRequest = (hostId, mealId, inviteeId) => {
     //returns false for debug purposes; should return a variable boolean
     return false
 }
+*/

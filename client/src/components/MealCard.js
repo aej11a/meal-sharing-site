@@ -126,7 +126,7 @@ export default function MealCard() {
                     color="primary"
                     style={{ float: 'right' }}
                     onClick={() => {
-                        if (searchRequest(mealData.hostId, mealId, user.uid)) {
+                        if (!searchRequest(mealData.hostId, mealId, user.uid)) {
                             newRequest(mealData.hostId, mealId, user.uid)
                         }
                     }}
