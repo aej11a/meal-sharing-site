@@ -99,8 +99,20 @@ export default function MealCard() {
         <>
             <CardMedia
                 className={classes.media}
-                image="https://miro.medium.com/max/1226/1*zGmA-8Fi6gZt7-je1_MOLQ.png"
-                title="Paella dish"
+                //image="https://miro.medium.com/max/1226/1*zGmA-8Fi6gZt7-je1_MOLQ.png"
+                component={() => (
+                    <iframe
+                        src={mealData.map_url}
+                        width="100%"
+                        height="350px"
+                        id="myId"
+                        title="cardMap"
+                        className="myClassname"
+                        display="initial"
+                        position="relative"
+                    />
+                )}
+                title="Map"
             />
             <CardHeader title={mealData.name} />
             <CardContent>
@@ -138,7 +150,7 @@ export default function MealCard() {
             <CardContent>
                 <h3>Dishes</h3>
                 {mealData.dishes.map((dish) => (
-                    <DishDisplay dish={dish} />
+                    <DishDisplay dish={dish} key={dish.name} />
                 ))}
             </CardContent>
         </>
