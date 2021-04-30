@@ -51,11 +51,53 @@ export function RequestCard() {
                     querySnapshot.forEach((doc) => {
                         requestArray.push(doc.data())
                     })
-
+                    setRequestData(requestArray)
+                    if (requestArray) {
+                        requestArray.forEach(async (doc) => {
+                            const mealRes = await db
+                                .collection('meals')
+                                .doc(doc.MealId)
+                                .get()
+                            if (mealRes.exists) {
+                                mealArray.push(mealRes.data())
+                            } else {
+                                console.log('No such document!')
+                            }
+                        })
+                        setMealData(mealArray) //Not working?
+                    }
                     querySnapshot.forEach(async (doc) => {
+                        const userRes = await db
+                            .collection('users')
+                            .doc(doc.data().HostId)
+                            .get()
+                        if (userRes.exists) {
+                            userArray.push(userRes.data().name)
+                        } else {
+                            console.log('No such document!')
+                        }
+                    })
+                    setHostData(userArray)
+                } else {
+                    console.log('No such document!')
+                }
+            } catch (error) {
+                console.log('Error getting document:', error)
+            }
+        }
+        fetchData()
+    }, [])
+
+    /*
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                let mealArray = []
+                if(requestData){
+                    requestData.forEach(async (doc) => {
                         const mealRes = await db
                             .collection('meals')
-                            .doc(doc.data().MealId)
+                            .doc(doc.MealId)
                             .get()
                         if (mealRes.exists) {
                             mealArray.push(mealRes.data())
@@ -63,30 +105,23 @@ export function RequestCard() {
                             console.log('No such document!')
                         }
                     })
-
-                    querySnapshot.forEach(async (doc) => {
-                        const userRes = await db
-                            .collection('users')
-                            .doc(doc.data().HostId)
-                            .get()
-                        if (userRes.exists) {
-                            userArray.push(userRes.name)
-                        } else {
-                            console.log('No such document!')
-                        }
-                    })
+                    setMealData(mealArray) //Not working?
+                    console.log(mealArray)
                 } else {
                     console.log('No such document!')
                 }
-                setRequestData(requestArray)
-                setMealData(mealArray) //Not working?
-                setHostData(userArray)
-            } catch (error) {
+            }
+            catch (error) {
                 console.log('Error getting document:', error)
             }
         }
         fetchData()
     })
+    */
+
+    console.log(requestData)
+    console.log(mealData)
+    console.log(hostData)
 
     const getDateString = (date) => {
         return date.toLocaleDateString('en-US', {
