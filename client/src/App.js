@@ -8,6 +8,7 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
 import orange from '@material-ui/core/colors/orange'
 import { MealCreation } from './pages/MealCreation'
 import { MealDisplay } from './pages/MealDisplay'
+import { RequestsDisplay } from './pages/RequestsDisplay'
 import { firebase, db } from './firebase'
 
 const theme = createMuiTheme({
@@ -77,6 +78,9 @@ export const App = () => {
                         </Route>
                         <Route exact path="/meals/display/:mealId">
                             <MealDisplay />
+                        </Route>
+                        <Route exact path="/requests">
+                            <RequestsDisplay />
                         </Route>
                     </Switch>
                 </Router>

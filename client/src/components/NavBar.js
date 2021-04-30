@@ -65,6 +65,13 @@ export const NavBar = () => {
                         icon={<AddBoxIcon />}
                     />
                 )}
+                {user && (
+                    <ListItemLink
+                        to="/requests"
+                        primary="My Requests"
+                        icon={<AddBoxIcon />} //Look up Icons
+                    />
+                )}
             </Toolbar>
         </AppBar>
     )
