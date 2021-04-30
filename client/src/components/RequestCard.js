@@ -51,7 +51,7 @@ export function RequestCard() {
                     querySnapshot.forEach((doc) => {
                         requestArray.push(doc.data())
                     })
-                    setRequestData(requestArray)
+
                     querySnapshot.forEach(async (doc) => {
                         const mealRes = await db
                             .collection('meals')
@@ -63,24 +63,24 @@ export function RequestCard() {
                             console.log('No such document!')
                         }
                     })
-                    setMealData(mealArray)
+
                     querySnapshot.forEach(async (doc) => {
-                        if (doc.data().HostId) {
-                            const userRes = await db
-                                .collection('users')
-                                .doc(doc.data().HostId)
-                                .get()
-                            if (userRes.exists) {
-                                userArray.push(userRes.name)
-                            } else {
-                                console.log('No such document!')
-                            }
+                        const userRes = await db
+                            .collection('users')
+                            .doc(doc.data().HostId)
+                            .get()
+                        if (userRes.exists) {
+                            userArray.push(userRes.name)
+                        } else {
+                            console.log('No such document!')
                         }
                     })
-                    setHostData(userArray)
                 } else {
                     console.log('No such document!')
                 }
+                setRequestData(requestArray)
+                setMealData(mealArray) //Not working?
+                setHostData(userArray)
             } catch (error) {
                 console.log('Error getting document:', error)
             }
@@ -102,7 +102,7 @@ export function RequestCard() {
 
     const showStatus = (status) => {
         if (status === 'Accepted') {
-            ;<CheckIcon />
+            return <CheckIcon />
         } else if (status === 'Rejected') {
             return <CloseIcon />
         } else {
@@ -115,11 +115,10 @@ export function RequestCard() {
     ) : (
         //This is the ui for the requests
         <>
-            {requestData.map(function (request) {
+            {requestData.map(function (request, index) {
                 ;<li key={request.MealId}>
-                    <CardHeader
-                        title={mealData[requestData.indexOf(request)].name}
-                    />
+                    <CardHeader title={mealData[index].name} />
+
                     <CardContent>
                         <div
                             style={{
@@ -129,30 +128,18 @@ export function RequestCard() {
                         >
                             <AccountCircleIcon />
                             <span>
-                                {hostData[requestData.indexOf(request)] &&
-                                    hostData[requestData.indexOf(request)].name}
+                                {hostData[index] && hostData[index].name}
                             </span>
                             <CalendarIcon />
                             <span>
                                 {getDateString(
-                                    mealData[requestData.indexOf(request)] &&
-                                        mealData[requestData.indexOf(request)]
-                                            .time
-                                        ? new Date(
-                                              mealData[
-                                                  requestData.indexOf(request)
-                                              ].time
-                                          )
+                                    mealData[index] && mealData[index].time
+                                        ? new Date(mealData[index].time)
                                         : undefined
                                 )}
                             </span>
                             <LocationPinIcon />
-                            <span>
-                                {
-                                    mealData[requestData.indexOf(request)]
-                                        .location
-                                }
-                            </span>
+                            <span>{mealData[index].location}</span>
                             {/*
                         <ExpirationIcon />
                         <span>Expires {getDateString(expiration)}</span>
