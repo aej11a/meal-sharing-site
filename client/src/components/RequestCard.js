@@ -52,8 +52,10 @@ export function RequestCard() {
                         requestArray.push(doc.data())
                     })
                     setRequestData(requestArray)
-                    if (requestArray) {
-                        requestArray.forEach(async (doc) => {
+                    if (requestArray.length > 0) {
+                        // map means "for each (X) in array, (do something to X) to (make corresponding element Y in the new array)"
+                        // so here it means "for each (element in requestArray), (run a query) and (put the promise in the queries array)"
+                        const queries = requestArray.map(async (doc) => {
                             const mealRes = await db
                                 .collection('meals')
                                 .doc(doc.MealId)
@@ -64,6 +66,9 @@ export function RequestCard() {
                                 console.log('No such document!')
                             }
                         })
+                        await Promise.all(queries)
+                        // after "await Promise.all" we know that all of the queries have finished,
+                        //  so now we can setMealData knowing that mealArray is filled in
                         setMealData(mealArray) //Not working?
                     }
                     querySnapshot.forEach(async (doc) => {
