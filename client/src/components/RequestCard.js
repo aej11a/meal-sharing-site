@@ -41,7 +41,6 @@ export function RequestCard() {
                 */
             try {
                 let requestArray = []
-                let mealArray = []
                 let userArray = []
                 const requestRes = db
                     .collection('meal-requests')
@@ -51,6 +50,7 @@ export function RequestCard() {
                     querySnapshot.forEach((doc) => {
                         requestArray.push(doc.data())
                     })
+                    await Promise.all(requestArray)
                     setRequestData(requestArray)
                     if (requestArray.length > 0) {
                         // map means "for each (X) in array, (do something to X) to (make corresponding element Y in the new array)"
@@ -61,15 +61,14 @@ export function RequestCard() {
                                 .doc(doc.MealId)
                                 .get()
                             if (mealRes.exists) {
-                                mealArray.push(mealRes.data())
+                                return mealRes.data()
                             } else {
                                 console.log('No such document!')
                             }
                         })
                         await Promise.all(queries)
-                        // after "await Promise.all" we know that all of the queries have finished,
-                        //  so now we can setMealData knowing that mealArray is filled in
-                        setMealData(mealArray) //Not working?
+                        // console.log(queries) shows whats supposed to be in mealData. setMealData does not work
+                        setMealData(queries) //Not working?
                     }
                     querySnapshot.forEach(async (doc) => {
                         const userRes = await db
