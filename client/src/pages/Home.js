@@ -16,23 +16,22 @@ const getMeals = async (allergens) => {
         ...doc.data(),
         id: doc.id,
     }))
+    console.log(allergens)
     if (allergens && allergens.length) {
         return rawMealsData.filter((meal) => {
             const hasDishes = !!meal.dishes && meal.dishes.length > 0
-            if (!allergens) return true
-            else {
-                const isEachAllergenInDish = allergens.map((allergen) => {
-                    const dishIncludesAllergen = (dish) =>
-                        dish.dishIngredients &&
-                        dish.dishIngredients.includes(allergen)
-                    return (
-                        hasDishes &&
-                        typeof meal.dishes.find(dishIncludesAllergen) ===
-                            'undefined'
-                    )
-                })
-                return isEachAllergenInDish.includes(true)
-            }
+
+            const isEachAllergenInDish = allergens.map((allergen) => {
+                const dishIncludesAllergen = (dish) =>
+                    dish.dishIngredients &&
+                    dish.dishIngredients.includes(allergen)
+                return (
+                    hasDishes &&
+                    typeof meal.dishes.find(dishIncludesAllergen) ===
+                        'undefined'
+                )
+            })
+            return isEachAllergenInDish.includes(true)
         })
     } else {
         return rawMealsData
@@ -41,11 +40,11 @@ const getMeals = async (allergens) => {
 
 export const Home = () => {
     const [meals, setMeals] = React.useState()
-    const [filters, setFilters] = React.useState([])
+    const [appliedFilters, setAppliedFilters] = React.useState([])
 
     useEffect(() => {
-        getMeals().then(setMeals)
-    }, [filters])
+        getMeals(appliedFilters).then(setMeals)
+    }, [appliedFilters])
 
     return (
         <div>
@@ -54,7 +53,7 @@ export const Home = () => {
                     event.preventDefault()
                     const newAllergen = event.target.removeIngredient.value
                     if (newAllergen && newAllergen.length > 0)
-                        setFilters([...filters, newAllergen])
+                        setAppliedFilters([...appliedFilters, newAllergen])
                 }}
             >
                 <TextField
@@ -67,9 +66,25 @@ export const Home = () => {
                     Add Filter
                 </Button>
             </form>
-            {filters &&
-                filters.map((filter) => (
-                    <Chip label={filter} variant="outlined"></Chip>
+            {appliedFilters &&
+                appliedFilters.map((filter) => (
+                    <Chip
+                        label={filter}
+                        onClick={() =>
+                            setAppliedFilters(
+                                appliedFilters.filter(
+                                    (filterName) => filterName !== filter
+                                )
+                            )
+                        }
+                        onDelete={() =>
+                            setAppliedFilters(
+                                appliedFilters.filter(
+                                    (filterName) => filterName !== filter
+                                )
+                            )
+                        }
+                    />
                 ))}
             {meals &&
                 meals.map((meal) => (
