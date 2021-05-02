@@ -6,9 +6,6 @@ import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import { db } from '../firebase'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
-import LocationPinIcon from '@material-ui/icons/LocationOn'
-import CalendarIcon from '@material-ui/icons/Today'
-import ExpirationIcon from '@material-ui/icons/TimerOff'
 import CheckIcon from '@material-ui/icons/Check'
 import CloseIcon from '@material-ui/icons/Close'
 import AccessTimeIcon from '@material-ui/icons/AccessTime'
@@ -16,7 +13,6 @@ import { makeStyles } from '@material-ui/core/styles'
 import { useViewport } from '../use-viewport'
 import { useUser } from '../App'
 
-//Styles
 const useStyles = makeStyles(() => ({
     root: {
         maxWidth: 500,
@@ -26,13 +22,12 @@ const useStyles = makeStyles(() => ({
     },
 }))
 
-export function RequestCard() {
+export default function MealRequestCard(props) {
     const { isMobile } = useViewport()
     const classes = useStyles()
     const { user } = useUser()
     const [requestData, setRequestData] = useState()
-    const [mealData, setMealData] = useState()
-    const [hostData, setHostData] = useState()
+    const [inviteeData, setInviteeData] = useState()
 
     useEffect(() => {
         const fetchData = async () => {
@@ -44,13 +39,16 @@ export function RequestCard() {
                     let requestArray = []
                     const requestRes = db
                         .collection('meal-requests')
-                        .where('InviteeId', '==', user.uid)
+                        .where('MealId', '==', props.uid)
                     const querySnapshot = await requestRes.get()
 
                     if (!querySnapshot.empty) {
                         // Get all requests that match the uid
                         querySnapshot.forEach((doc) => {
-                            requestArray.push(doc.data())
+                            requestArray.push({
+                                data: doc.data(),
+                                id: doc.RequestId,
+                            })
                         })
                         setRequestData(requestArray)
 
@@ -59,34 +57,21 @@ export function RequestCard() {
                             // map means "for each (X) in array, (do something to X) to (make corresponding element Y in the new array)"
                             // so here it means "for each (element in requestArray), (run a query) and (put the promise in the queries array)"
                             const queries = requestArray.map(async (doc) => {
-                                const mealRes = await db
-                                    .collection('meals')
-                                    .doc(doc.MealId)
+                                const inviteeRes = await db
+                                    .collection('users')
+                                    .doc(doc.data.InviteeId)
                                     .get()
-                                if (mealRes.exists) {
-                                    return { ...mealRes.data(), id: doc.MealId }
+                                if (inviteeRes.exists) {
+                                    return {
+                                        ...inviteeRes.data(),
+                                        id: doc.data.InviteeId,
+                                    }
                                 } else {
                                     console.log('No such document!')
                                 }
                             })
                             const results = await Promise.all(queries)
-                            setMealData(results)
-
-                            const queriesHost = requestArray.map(
-                                async (doc) => {
-                                    const userRes = await db
-                                        .collection('users')
-                                        .doc(doc.HostId)
-                                        .get()
-                                    if (userRes.exists) {
-                                        return userRes.data()
-                                    } else {
-                                        console.log('No such document!')
-                                    }
-                                }
-                            )
-                            const hostRes = await Promise.all(queriesHost)
-                            setHostData(hostRes)
+                            setInviteeData(results)
                         }
                     } else {
                         console.log('No such document!')
@@ -99,18 +84,6 @@ export function RequestCard() {
         fetchData()
     }, [user])
 
-    const getDateString = (date) => {
-        return date.toLocaleDateString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric',
-        })
-    }
-
     const showStatus = (status) => {
         if (status === 'Accepted') {
             return <CheckIcon />
@@ -120,27 +93,60 @@ export function RequestCard() {
             return <AccessTimeIcon />
         }
     }
+
+    const chooseStatus = (status) => {
+        if (status === 'Accepted' || status === 'Rejected') {
+            return (
+                <>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        style={{ float: 'left' }}
+                        onClick={async () => {
+                            db.collection('meal-requests')
+                                .doc(requestData.id)
+                                .update({ Status: 'Accepted' })
+                        }}
+                    >
+                        Accept Request
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        style={{ float: 'right' }}
+                        onClick={async () => {
+                            db.collection('meal-requests')
+                                .doc(requestData.id)
+                                .update({ Status: 'Rejected' })
+                        }}
+                    >
+                        Reject Request
+                    </Button>
+                </>
+            )
+        }
+    }
     console.log({
         requestData,
-        mealData,
-        hostData,
-        condition: !(requestData && mealData && hostData),
+        inviteeData,
+        condition: !(requestData && inviteeData),
     })
-    const innerContent = !(requestData && mealData && hostData) ? (
+    const innerContent = !(requestData && inviteeData) ? (
         <p>Loading...</p>
     ) : (
         //This is the ui for the requests
         <>
             {requestData.map(function (request, index) {
-                const requestMeal = mealData.filter(
-                    (meal) => meal.id === request.MealId
+                const requestInvitee = inviteeData.filter(
+                    (invitee) => invitee.id === request.data.InviteeId
                 )[0]
-                console.log(
-                    mealData.filter((meal) => meal.id === request.MealId)
-                )
                 return (
-                    <li key={request.MealId} style={{ listStyleType: 'none' }}>
-                        <CardHeader title={requestMeal.name} />
+                    <li
+                        key={request.data.InviteeId}
+                        style={{ listStyleType: 'none' }}
+                    >
+                        <AccountCircleIcon />
+                        <CardHeader title={requestInvitee.name} />
 
                         <CardContent>
                             <div
@@ -149,26 +155,9 @@ export function RequestCard() {
                                     gridTemplateColumns: '0.1fr 1fr',
                                 }}
                             >
-                                <AccountCircleIcon />
-                                <span>
-                                    {hostData[index] && hostData[index].name}
-                                </span>
-                                <CalendarIcon />
-                                <span>
-                                    {getDateString(
-                                        mealData[index] && mealData[index].time
-                                            ? new Date(mealData[index].time)
-                                            : undefined
-                                    )}
-                                </span>
-                                <LocationPinIcon />
-                                <span>{mealData[index].location}</span>
-                                {/*
-                        <ExpirationIcon />
-                        <span>Expires {getDateString(expiration)}</span>
-                        */}
-                                {showStatus(request.Status)}
-                                <span>{request.Status}</span>
+                                {showStatus(request.data.Status)}
+                                <span>{request.data.Status}</span>
+                                {chooseStatus(request.data.Status)}
                             </div>
                         </CardContent>
                     </li>
