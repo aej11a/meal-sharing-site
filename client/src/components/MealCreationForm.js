@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import firebase from 'firebase'
+import { storage } from 'firebase'
 import Button from '@material-ui/core/Button'
 import MTextField from '@material-ui/core/TextField'
 import MSelect from '@material-ui/core/Select'
@@ -261,6 +262,14 @@ export const MealCreationForm = () => {
                                     setDishIngredients(e.target.value)
                                 }
                             />
+                            <br></br>
+
+                            <br></br>
+                            <Button onClick={addDish} variant={'contained'}>
+                                Upload image
+                            </Button>
+                            <br></br>
+
                             <br />
                             <Button onClick={addDish} variant={'contained'}>
                                 Add Dish
