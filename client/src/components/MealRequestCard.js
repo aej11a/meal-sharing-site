@@ -22,7 +22,7 @@ const useStyles = makeStyles(() => ({
     },
 }))
 
-export default function MealRequestCard(props) {
+export default function MealRequestCard({ mealData, mealId }) {
     const { isMobile } = useViewport()
     const classes = useStyles()
     const { user } = useUser()
@@ -39,17 +39,18 @@ export default function MealRequestCard(props) {
                     let requestArray = []
                     const requestRes = db
                         .collection('meal-requests')
-                        .where('MealId', '==', props.uid)
+                        .where('MealId', '==', mealId)
                     const querySnapshot = await requestRes.get()
 
                     if (!querySnapshot.empty) {
                         // Get all requests that match the uid
                         querySnapshot.forEach((doc) => {
                             requestArray.push({
-                                data: doc.data(),
-                                id: doc.RequestId,
+                                ...doc.data(),
+                                id: doc.id,
                             })
                         })
+                        console.log(requestArray)
                         setRequestData(requestArray)
 
                         // If requests are found, get all of the meal info and user data for the request meals
@@ -59,18 +60,19 @@ export default function MealRequestCard(props) {
                             const queries = requestArray.map(async (doc) => {
                                 const inviteeRes = await db
                                     .collection('users')
-                                    .doc(doc.data.InviteeId)
+                                    .doc(doc.InviteeId)
                                     .get()
                                 if (inviteeRes.exists) {
                                     return {
                                         ...inviteeRes.data(),
-                                        id: doc.data.InviteeId,
+                                        id: doc.InviteeId,
                                     }
                                 } else {
                                     console.log('No such document!')
                                 }
                             })
                             const results = await Promise.all(queries)
+                            console.log(results)
                             setInviteeData(results)
                         }
                     } else {
@@ -82,7 +84,7 @@ export default function MealRequestCard(props) {
             }
         }
         fetchData()
-    }, [user])
+    }, [mealId])
 
     const showStatus = (status) => {
         if (status === 'Accepted') {
@@ -94,8 +96,8 @@ export default function MealRequestCard(props) {
         }
     }
 
-    const chooseStatus = (status) => {
-        if (status === 'Accepted' || status === 'Rejected') {
+    const chooseStatus = (status, requestId) => {
+        if (status === 'Pending') {
             return (
                 <>
                     <Button
@@ -104,7 +106,7 @@ export default function MealRequestCard(props) {
                         style={{ float: 'left' }}
                         onClick={async () => {
                             db.collection('meal-requests')
-                                .doc(requestData.id)
+                                .doc(requestId)
                                 .update({ Status: 'Accepted' })
                         }}
                     >
@@ -116,7 +118,7 @@ export default function MealRequestCard(props) {
                         style={{ float: 'right' }}
                         onClick={async () => {
                             db.collection('meal-requests')
-                                .doc(requestData.id)
+                                .doc(requestId)
                                 .update({ Status: 'Rejected' })
                         }}
                     >
@@ -136,13 +138,13 @@ export default function MealRequestCard(props) {
     ) : (
         //This is the ui for the requests
         <>
-            {requestData.map(function (request, index) {
+            {requestData.map(function (request) {
                 const requestInvitee = inviteeData.filter(
-                    (invitee) => invitee.id === request.data.InviteeId
+                    (invitee) => invitee.id === request.InviteeId
                 )[0]
                 return (
                     <li
-                        key={request.data.InviteeId}
+                        key={request.InviteeId}
                         style={{ listStyleType: 'none' }}
                     >
                         <AccountCircleIcon />
@@ -155,9 +157,9 @@ export default function MealRequestCard(props) {
                                     gridTemplateColumns: '0.1fr 1fr',
                                 }}
                             >
-                                {showStatus(request.data.Status)}
-                                <span>{request.data.Status}</span>
-                                {chooseStatus(request.data.Status)}
+                                {showStatus(request.Status)}
+                                <span>{request.Status}</span>
+                                {chooseStatus(request.Status, request.id)}
                             </div>
                         </CardContent>
                     </li>
@@ -166,7 +168,7 @@ export default function MealRequestCard(props) {
         </>
     )
 
-    return isMobile ? (
+    const mobileDisplay = isMobile ? (
         innerContent
     ) : (
         <Grid
@@ -182,4 +184,6 @@ export default function MealRequestCard(props) {
             </Grid>
         </Grid>
     )
+
+    return user && user.uid === mealData.hostId ? mobileDisplay : <div></div>
 }

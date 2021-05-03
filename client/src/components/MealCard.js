@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { db } from '../firebase'
+import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardHeader from '@material-ui/core/CardHeader'
@@ -32,50 +31,10 @@ const useStyles = makeStyles(() => ({
     },
 }))
 
-export default function MealCard() {
+export default function MealCard({ hostData, mealData, mealId }) {
     const classes = useStyles()
-    const [mealData, setMealData] = useState()
-    const { mealId } = useParams()
-    const [hostData, setHostData] = useState()
     const { isMobile } = useViewport()
     const { user } = useUser()
-    const history = useHistory()
-
-    /*
-    if (!user) {
-        history.push('/account')
-    }
-    */
-
-    useEffect(() => {
-        const fetchData = async () => {
-            /*
-                Functionality for get data from firestore
-                */
-            try {
-                const mealRes = await db.collection('meals').doc(mealId).get()
-                if (mealRes.exists) {
-                    setMealData(mealRes.data())
-                    if (mealRes.data().hostId) {
-                        const userRes = await db
-                            .collection('users')
-                            .doc(mealRes.data().hostId)
-                            .get()
-                        if (userRes.exists) {
-                            setHostData(userRes.data())
-                        } else {
-                            console.log('No such document!')
-                        }
-                    }
-                } else {
-                    console.log('No such document!')
-                }
-            } catch (error) {
-                console.log('Error getting document:', error)
-            }
-        }
-        fetchData()
-    }, [mealId])
 
     const mealDate =
         mealData && mealData.time ? new Date(mealData.time) : undefined

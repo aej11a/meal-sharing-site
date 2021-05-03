@@ -15,27 +15,6 @@ export const newRequest = (hostId, mealId, inviteeId) => {
         })
 }
 
-export const getRequest = (requestID) => {
-    let requestData
-    const fetchData = async () => {
-        try {
-            const requestRes = await db
-                .collection('meal-requests')
-                .doc(requestID)
-                .get()
-            if (requestRes.exists) {
-                requestData = requestRes.data()
-            } else {
-                console.log('No such request.')
-            }
-        } catch (error) {
-            console.log('Error getting document:', error)
-        }
-    }
-    fetchData()
-    return requestData
-}
-
 export const doesRequestExist = async (mealId, inviteeId) => {
     try {
         let foundAMatch = false
