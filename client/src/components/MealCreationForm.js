@@ -14,6 +14,7 @@ import { db } from '../firebase'
 import { getCoordinates } from '../forward-geocoding'
 import { useUser } from '../App'
 import { useHistory } from 'react-router-dom'
+import { ImageUpload } from './ImageUpload'
 
 require('firebase/firestore')
 
@@ -265,9 +266,12 @@ export const MealCreationForm = () => {
                             <br></br>
 
                             <br></br>
+                            {/** 
                             <Button onClick={addDish} variant={'contained'}>
                                 Upload image
-                            </Button>
+                            </Button> */}
+                            <ImageUpload></ImageUpload>
+
                             <br></br>
 
                             <br />

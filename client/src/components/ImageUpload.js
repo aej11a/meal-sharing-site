@@ -2,15 +2,18 @@ import React, { useState } from 'react'
 import { render } from 'react-dom'
 import { storage } from 'firebase'
 
-const ImageUpload = () => {
+export const ImageUpload = () => {
     const [image, setImage] = useState(null)
 
     const handleChange = (e) => {
         if (e.target.files[0]) {
+            setImage(e.target.files[0])
         }
     }
 
     const handleUpload = () => {}
+
+    console.log('image: ', image)
 
     return (
         <div>
