@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { db } from '../firebase'
 import { MealListItem } from '../components/MealListItem'
 import { Filters } from '../components/Filters'
-import { Map } from '../components/Map'
+import Map from '../components/Map'
 
 const getMeals = async (allergens) => {
     const snapshot = await db.collection('meals').get()
@@ -38,7 +38,7 @@ export const Home = () => {
 
     return (
         <div>
-            <Map />
+            <Map meals={meals} />
             <Filters
                 appliedFilters={appliedFilters}
                 setAppliedFilters={setAppliedFilters}

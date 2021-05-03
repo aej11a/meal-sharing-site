@@ -22,6 +22,7 @@ const posError = () => {
 
 const SimpleMap = (props) => {
     const [center, setCenter] = React.useState()
+    const [pins, setPins] = React.useState([])
     const showPosition = (position) => {
         let lat = position.coords.latitude
         let lng = position.coords.longitude
@@ -34,9 +35,28 @@ const SimpleMap = (props) => {
             alert('Must be on Google Chrome for this functionality.')
         }
     }
+    const buildPins = (meals) => {
+        let pinArray = {}
+        for (var i = 0; i < meals.length; i++) {
+            const currPin = (
+                <Pin
+                    lat={meals[i].latitude}
+                    lng={meals[i].longitude}
+                    text={meals[i].name}
+                />
+            )
+            pinArray.push(currPin)
+        }
+    }
     React.useEffect(() => {
         getPosition()
     }, [getPosition])
+    //andrew said dont do this v
+    // React.useEffect(() => {
+    //     if(props.meals !== undefined){
+    //         buildPins(props.meals)
+    //     }
+    // }, [props.meals])
     if (center)
         return (
             // Important! Always set the container height explicitly
@@ -53,6 +73,9 @@ const SimpleMap = (props) => {
                         lng={center.lng}
                         text="Your Location"
                     />
+                    {pins.map((currPin) => {
+                        ;<currPin></currPin>
+                    })}
                 </GoogleMapReact>
             </div>
         )
