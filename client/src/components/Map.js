@@ -20,7 +20,7 @@ const posError = () => {
     }
 }
 
-const SimpleMap = (props) => {
+const SimpleMap = ({ meals }) => {
     const [center, setCenter] = React.useState()
     const [pins, setPins] = React.useState([])
     const showPosition = (position) => {
@@ -35,8 +35,8 @@ const SimpleMap = (props) => {
             alert('Must be on Google Chrome for this functionality.')
         }
     }
-    const buildPins = (meals) => {
-        let pinArray = {}
+    var pinArray = []
+    if (meals) {
         for (var i = 0; i < meals.length; i++) {
             const currPin = (
                 <Pin
@@ -51,7 +51,6 @@ const SimpleMap = (props) => {
     React.useEffect(() => {
         getPosition()
     }, [getPosition])
-    //andrew said dont do this v
     // React.useEffect(() => {
     //     if(props.meals !== undefined){
     //         buildPins(props.meals)
@@ -73,9 +72,7 @@ const SimpleMap = (props) => {
                         lng={center.lng}
                         text="Your Location"
                     />
-                    {pins.map((currPin) => {
-                        ;<currPin></currPin>
-                    })}
+                    {pinArray}
                 </GoogleMapReact>
             </div>
         )
