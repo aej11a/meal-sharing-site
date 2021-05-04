@@ -4,6 +4,7 @@ import { storage } from '../firebase'
 
 export const ImageUpload = () => {
     const [image, setImage] = useState(null)
+    const [url, setUrl] = useState('')
 
     const handleChange = (e) => {
         if (e.target.files[0]) {
@@ -16,7 +17,7 @@ export const ImageUpload = () => {
         const uploadTask = storage.ref(`images/${image.name}`).put(image)
         uploadTask.on(
             'state_changed',
-            (snapsot) => {},
+            (snapshot) => {},
             (error) => {
                 console.log(error)
             },
@@ -26,7 +27,7 @@ export const ImageUpload = () => {
                     .child(image.name)
                     .getDownloadURL()
                     .then((url) => {
-                        console.log(url)
+                        setUrl(url)
                     })
             }
         )
@@ -38,6 +39,9 @@ export const ImageUpload = () => {
         <div>
             <input type="file" onChange={handleChange} />
             <button onClick={handleUpload}> Upload </button>
+            <div>
+                <img src={url} alt="firebase-image" />
+            </div>
         </div>
     )
 }
