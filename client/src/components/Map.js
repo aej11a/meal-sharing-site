@@ -22,12 +22,13 @@ const posError = () => {
 
 const SimpleMap = ({ meals }) => {
     const [center, setCenter] = React.useState()
-    const [pins, setPins] = React.useState([])
+    //const [pins, setPins] = React.useState([])
     const showPosition = (position) => {
         let lat = position.coords.latitude
         let lng = position.coords.longitude
         setCenter({ lat, lng })
     }
+    // eslint-disable-next-line
     const getPosition = () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(showPosition, posError)
