@@ -1,5 +1,5 @@
 import firebaseLib from 'firebase'
-import 'firebase/storage'
+//import 'firebase/storage'
 
 export const firebase = firebaseLib.initializeApp({
     apiKey: 'AIzaSyDTcOhMHYO4q9iqKBD75sicIxiBLJnFS2s',
