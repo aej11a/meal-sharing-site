@@ -39,8 +39,13 @@ export const ImageUpload = () => {
         <div>
             <input type="file" onChange={handleChange} />
             <button onClick={handleUpload}> Upload </button>
+            <div></div>
             <div>
-                <img src={url} alt="firebase-image" />
+                <img
+                    style={{ width: '300px', height: '280px' }}
+                    src={url}
+                    alt="firebase-image"
+                />
             </div>
         </div>
     )

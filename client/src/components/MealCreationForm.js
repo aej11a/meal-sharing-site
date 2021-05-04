@@ -59,6 +59,8 @@ export const MealCreationForm = () => {
     const [course, setCourse] = useState()
     const [dishName, setDishName] = useState()
     const [dishIngredients, setDishIngredients] = useState()
+    const [dishImage, setDishImage] = useState(null)
+    const [url, setUrl] = useState('')
     const history = useHistory()
     const { user } = useUser()
 
@@ -73,12 +75,14 @@ export const MealCreationForm = () => {
                 dishName,
                 dishIngredients,
                 dishCourse: course,
+                dishImage, //adding image portion
             },
         ])
         setCourse(null)
         setDishName(null)
         setDishIngredients(null)
         setShowDishes(false)
+        setDishImage(null) //image stuff
     }
 
     const handleSubmit = async (event) => {
