@@ -76,11 +76,13 @@ const SimpleMap = ({ meals, overrideCenter }) => {
                     defaultCenter={center}
                     defaultZoom={15}
                 >
-                    <Pin
-                        lat={center.lat}
-                        lng={center.lng}
-                        text="Your Location"
-                    />
+                    {!overrideCenter && (
+                        <Pin
+                            lat={center.lat}
+                            lng={center.lng}
+                            text="Your Location"
+                        />
+                    )}
                     {pinArray}
                 </GoogleMapReact>
             </div>
