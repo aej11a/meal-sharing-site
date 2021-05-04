@@ -140,37 +140,41 @@ export function RequestCard() {
                 )
                 return (
                     <li key={request.MealId} style={{ listStyleType: 'none' }}>
-                        <CardHeader title={requestMeal.name} />
+                        <Card>
+                            <CardHeader title={requestMeal.name} />
 
-                        <CardContent>
-                            <div
-                                style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: '0.1fr 1fr',
-                                }}
-                            >
-                                <AccountCircleIcon />
-                                <span>
-                                    {hostData[index] && hostData[index].name}
-                                </span>
-                                <CalendarIcon />
-                                <span>
-                                    {getDateString(
-                                        mealData[index] && mealData[index].time
-                                            ? new Date(mealData[index].time)
-                                            : undefined
-                                    )}
-                                </span>
-                                <LocationPinIcon />
-                                <span>{mealData[index].location}</span>
-                                {/*
-                        <ExpirationIcon />
-                        <span>Expires {getDateString(expiration)}</span>
-                        */}
-                                {showStatus(request.Status)}
-                                <span>{request.Status}</span>
-                            </div>
-                        </CardContent>
+                            <CardContent>
+                                <div
+                                    style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: '0.1fr 1fr',
+                                    }}
+                                >
+                                    <AccountCircleIcon />
+                                    <span>
+                                        {hostData[index] &&
+                                            hostData[index].name}
+                                    </span>
+                                    <CalendarIcon />
+                                    <span>
+                                        {getDateString(
+                                            mealData[index] &&
+                                                mealData[index].time
+                                                ? new Date(mealData[index].time)
+                                                : undefined
+                                        )}
+                                    </span>
+                                    <LocationPinIcon />
+                                    <span>{mealData[index].location}</span>
+                                    {/*
+                            <ExpirationIcon />
+                            <span>Expires {getDateString(expiration)}</span>
+                            */}
+                                    {showStatus(request.Status)}
+                                    <span>{request.Status}</span>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </li>
                 )
             })}

@@ -5,7 +5,6 @@ import CardContent from '@material-ui/core/CardContent'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import { db } from '../firebase'
-import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import CheckIcon from '@material-ui/icons/Check'
 import CloseIcon from '@material-ui/icons/Close'
 import AccessTimeIcon from '@material-ui/icons/AccessTime'
@@ -19,6 +18,10 @@ const useStyles = makeStyles(() => ({
         width: 500,
         flexGrow: 1,
         marginTop: 15,
+    },
+    button: {
+        margin: '.5rem',
+        position: 'relative',
     },
 }))
 
@@ -50,7 +53,6 @@ export default function MealRequestCard({ mealData, mealId }) {
                                 id: doc.id,
                             })
                         })
-                        console.log(requestArray)
                         setRequestData(requestArray)
 
                         // If requests are found, get all of the meal info and user data for the request meals
@@ -72,7 +74,6 @@ export default function MealRequestCard({ mealData, mealId }) {
                                 }
                             })
                             const results = await Promise.all(queries)
-                            console.log(results)
                             setInviteeData(results)
                         }
                     } else {
@@ -99,11 +100,11 @@ export default function MealRequestCard({ mealData, mealId }) {
     const chooseStatus = (status, requestId) => {
         if (status === 'Pending') {
             return (
-                <>
+                <div style={{ textAlign: 'center' }}>
                     <Button
                         variant="contained"
                         color="primary"
-                        style={{ float: 'left' }}
+                        className={classes.button}
                         onClick={async () => {
                             db.collection('meal-requests')
                                 .doc(requestId)
@@ -115,7 +116,7 @@ export default function MealRequestCard({ mealData, mealId }) {
                     <Button
                         variant="contained"
                         color="primary"
-                        style={{ float: 'right' }}
+                        className={classes.button}
                         onClick={async () => {
                             db.collection('meal-requests')
                                 .doc(requestId)
@@ -124,15 +125,11 @@ export default function MealRequestCard({ mealData, mealId }) {
                     >
                         Reject Request
                     </Button>
-                </>
+                </div>
             )
         }
     }
-    console.log({
-        requestData,
-        inviteeData,
-        condition: !(requestData && inviteeData),
-    })
+
     const innerContent = !(requestData && inviteeData) ? (
         <p>Loading...</p>
     ) : (
@@ -145,23 +142,27 @@ export default function MealRequestCard({ mealData, mealId }) {
                 return (
                     <li
                         key={request.InviteeId}
-                        style={{ listStyleType: 'none' }}
+                        style={{
+                            listStyleType: 'none',
+                            padding: 10,
+                        }}
                     >
-                        <AccountCircleIcon />
-                        <CardHeader title={requestInvitee.name} />
+                        <Card>
+                            <CardHeader title={requestInvitee.name} />
 
-                        <CardContent>
-                            <div
-                                style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: '0.1fr 1fr',
-                                }}
-                            >
-                                {showStatus(request.Status)}
-                                <span>{request.Status}</span>
-                                {chooseStatus(request.Status, request.id)}
-                            </div>
-                        </CardContent>
+                            <CardContent>
+                                <div
+                                    style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: '0.1fr 1fr',
+                                    }}
+                                >
+                                    {showStatus(request.Status)}
+                                    <span>{request.Status}</span>
+                                </div>
+                            </CardContent>
+                            {chooseStatus(request.Status, request.id)}
+                        </Card>
                     </li>
                 )
             })}
