@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardHeader from '@material-ui/core/CardHeader'
@@ -6,17 +6,14 @@ import CardMedia from '@material-ui/core/CardMedia'
 import CardContent from '@material-ui/core/CardContent'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
-import { useParams } from 'react-router'
 import { DishDisplay } from './MealCreationForm'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import LocationPinIcon from '@material-ui/icons/LocationOn'
 import CalendarIcon from '@material-ui/icons/Today'
-import DistanceIcon from '@material-ui/icons/SpaceBar'
 import ExpirationIcon from '@material-ui/icons/TimerOff'
-import { useViewport } from '../use-viewport'
-import { newRequest, doesRequestExist } from './MealInviteHandler'
+import { useViewport } from '../util/use-viewport'
+import { newRequest, doesRequestExist } from '../util/mealInviteHandlers'
 import { useUser } from '../App'
-import { useHistory } from 'react-router-dom'
 import Map from './Map'
 
 const useStyles = makeStyles(() => ({
@@ -84,8 +81,6 @@ export default function MealCard({ hostData, mealData, mealId }) {
                     <span>{getDateString(mealDate)}</span>
                     <LocationPinIcon />
                     <span>{mealData.location}</span>
-                    <DistanceIcon />
-                    <span>DISTANCE TODO</span>
                     <ExpirationIcon />
                     <span>Expires {getDateString(expiration)}</span>
                 </div>

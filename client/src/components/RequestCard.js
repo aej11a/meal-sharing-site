@@ -3,17 +3,15 @@ import Card from '@material-ui/core/Card'
 import CardHeader from '@material-ui/core/CardHeader'
 import CardContent from '@material-ui/core/CardContent'
 import Grid from '@material-ui/core/Grid'
-import Button from '@material-ui/core/Button'
 import { db } from '../firebase'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import LocationPinIcon from '@material-ui/icons/LocationOn'
 import CalendarIcon from '@material-ui/icons/Today'
-import ExpirationIcon from '@material-ui/icons/TimerOff'
 import CheckIcon from '@material-ui/icons/Check'
 import CloseIcon from '@material-ui/icons/Close'
 import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import { makeStyles } from '@material-ui/core/styles'
-import { useViewport } from '../use-viewport'
+import { useViewport } from '../util/use-viewport'
 import { useUser } from '../App'
 
 //Styles
@@ -172,10 +170,6 @@ export function RequestCard() {
                                     </span>
                                     <LocationPinIcon />
                                     <span>{mealData[index].location}</span>
-                                    {/*
-                            <ExpirationIcon />
-                            <span>Expires {getDateString(expiration)}</span>
-                            */}
                                     {showStatus(request.Status)}
                                     <span>{request.Status}</span>
                                 </div>

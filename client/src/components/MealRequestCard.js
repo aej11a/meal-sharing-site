@@ -9,7 +9,7 @@ import CheckIcon from '@material-ui/icons/Check'
 import CloseIcon from '@material-ui/icons/Close'
 import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import { makeStyles } from '@material-ui/core/styles'
-import { useViewport } from '../use-viewport'
+import { useViewport } from '../util/use-viewport'
 import { useUser } from '../App'
 
 const useStyles = makeStyles(() => ({
@@ -85,7 +85,7 @@ export default function MealRequestCard({ mealData, mealId }) {
             }
         }
         fetchData()
-    }, [mealId])
+    }, [user, mealId])
 
     const showStatus = (status) => {
         if (status === 'Accepted') {

@@ -1,7 +1,7 @@
 import React, { useState, createContext, useContext, useEffect } from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { Home } from './pages/Home'
-import { AccountPage } from './pages/Account/AccountPage'
+import { AccountPage } from './pages/AccountPage'
 import './App.css'
 import { NavBar } from './components/NavBar'
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
@@ -107,25 +107,25 @@ export const App = () => {
                         {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
 
-                    <Switch>
-                        <Route exact path="/">
-                            <Home />
-                        </Route>
-                        <Route exact path="/account">
-                            <AccountPage />
-                        </Route>
-                        <Route exact path="/meals/new">
-                            <MealCreation />
-                        </Route>
-                        <Route exact path="/meals/display/:mealId">
-                            <MealDisplay />
-                        </Route>
-                        <Route exact path="/requests">
-                            <RequestsDisplay />
-                        </Route>
-                    </Switch>
-                </Router>
-
+                        <Switch>
+                            <Route exact path="/">
+                                <Home />
+                            </Route>
+                            <Route exact path="/account">
+                                <AccountPage />
+                            </Route>
+                            <Route exact path="/meals/new">
+                                <MealCreation />
+                            </Route>
+                            <Route exact path="/meals/display/:mealId">
+                                <MealDisplay />
+                            </Route>
+                            <Route exact path="/requests">
+                                <RequestsDisplay />
+                            </Route>
+                        </Switch>
+                    </Router>
+                </MealProvider>
             </UserProvider>
         </ThemeProvider>
     )

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { useUser } from '../../App'
+import { useUser } from '../App'
 import { ButtonGroup, Button, TextField, Grid } from '@material-ui/core'
-import { db } from '../../firebase'
+import { db } from '../firebase'
 
 const createUser = async ({ email, password, displayName, auth, setUser }) => {
     return await auth
