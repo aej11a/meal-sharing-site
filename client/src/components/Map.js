@@ -1,11 +1,14 @@
 import React from 'react'
 import GoogleMapReact from 'google-map-react'
+import { Link } from 'react-router-dom'
 
-const Pin = ({ text }) => (
-    <div style={{ marginLeft: '-20px', marginTop: '-40px' }}>
-        <img style={{ height: 40 }} src="/mapPin.png" alt="Pin"></img>
-        {text}
-    </div>
+const Pin = ({ text, link }) => (
+    <Link to={link} style={{ textDecoration: 'none', color: 'black' }}>
+        <div style={{ marginLeft: '-20px', marginTop: '-40px' }}>
+            <img style={{ height: 40 }} src="/mapPin.png" alt="Pin"></img>
+            {text}
+        </div>
+    </Link>
 )
 
 const posError = () => {
@@ -44,6 +47,7 @@ const SimpleMap = ({ meals }) => {
                     lat={meals[i].latitude}
                     lng={meals[i].longitude}
                     text={meals[i].name}
+                    link={`/meals/display/${meals[i].id}`}
                 />
             )
             pinArray.push(currPin)
