@@ -31,7 +31,7 @@ export const Filters = () => {
                     float: 'right',
                     marginTop: 10,
                     marginRight: 10,
-                    zIndex: 9999,
+                    zIndex: 2,
                 }}
             >
                 <FilterListIcon />

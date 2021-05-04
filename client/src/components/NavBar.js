@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
     AppBar,
     Toolbar,
@@ -11,6 +11,10 @@ import { useUser } from '../App'
 import { Link as RouterLink } from 'react-router-dom'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
 import AddBoxIcon from '@material-ui/icons/AddBox'
+import Drawer from '@material-ui/core/Drawer'
+import MenuIcon from '@material-ui/icons/Menu'
+import ListAltIcon from '@material-ui/icons/ListAlt'
+import { useViewport } from '../util/use-viewport'
 
 function ListItemLink(props) {
     const { icon, primary, to } = props
@@ -36,7 +40,9 @@ function ListItemLink(props) {
 }
 
 export const NavBar = () => {
+    const [showNavDrawer, setShowNavDrawer] = useState()
     const { user } = useUser()
+    const { isMobile } = useViewport()
 
     return (
         <AppBar position="static">
@@ -53,17 +59,46 @@ export const NavBar = () => {
                         cookout!
                     </RouterLink>
                 </Typography>
-                <ListItemLink
-                    to="/account"
-                    primary="Account"
-                    icon={<AccountBoxIcon />}
-                />
-                {user && (
+                {!user && (
                     <ListItemLink
-                        to="/meals/new"
-                        primary="Create Meal"
-                        icon={<AddBoxIcon />}
+                        to="/account"
+                        primary="Sign In"
+                        icon={<AccountBoxIcon />}
                     />
+                )}
+                {user && (
+                    <>
+                        <span onClick={() => setShowNavDrawer(true)}>
+                            <MenuIcon
+                                style={{
+                                    position: 'absolute',
+                                    right: 30,
+                                    top: isMobile ? 17 : 20,
+                                }}
+                            />
+                        </span>
+                        <Drawer
+                            anchor={'right'}
+                            open={showNavDrawer}
+                            onClose={() => setShowNavDrawer(false)}
+                        >
+                            <ListItemLink
+                                to="/account"
+                                primary="Account"
+                                icon={<AccountBoxIcon />}
+                            />
+                            <ListItemLink
+                                to="/meals/new"
+                                primary="Create Meal"
+                                icon={<AddBoxIcon />}
+                            />
+                            <ListItemLink
+                                to="/requests"
+                                primary="My Requests"
+                                icon={<ListAltIcon />} //Look up Icons
+                            />
+                        </Drawer>
+                    </>
                 )}
             </Toolbar>
         </AppBar>

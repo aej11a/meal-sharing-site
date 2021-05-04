@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { db } from '../firebase'
+import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardHeader from '@material-ui/core/CardHeader'
@@ -7,14 +6,14 @@ import CardMedia from '@material-ui/core/CardMedia'
 import CardContent from '@material-ui/core/CardContent'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
-import { useParams } from 'react-router'
 import { DishDisplay } from './MealCreationForm'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import LocationPinIcon from '@material-ui/icons/LocationOn'
 import CalendarIcon from '@material-ui/icons/Today'
-import DistanceIcon from '@material-ui/icons/SpaceBar'
 import ExpirationIcon from '@material-ui/icons/TimerOff'
-import { useViewport } from '../use-viewport'
+import { useViewport } from '../util/use-viewport'
+import { newRequest, doesRequestExist } from '../util/mealInviteHandlers'
+import { useUser } from '../App'
 import Map from './Map'
 
 const useStyles = makeStyles(() => ({
@@ -30,42 +29,10 @@ const useStyles = makeStyles(() => ({
     },
 }))
 
-export default function MealCard() {
+export default function MealCard({ hostData, mealData, mealId }) {
     const classes = useStyles()
-    const [mealData, setMealData] = useState()
-    const { mealId } = useParams()
-    const [hostData, setHostData] = useState()
     const { isMobile } = useViewport()
-
-    useEffect(() => {
-        const fetchData = async () => {
-            /*
-                Functionality for get data from firestore
-                */
-            try {
-                const mealRes = await db.collection('meals').doc(mealId).get()
-                if (mealRes.exists) {
-                    setMealData(mealRes.data())
-                    if (mealRes.data().hostId) {
-                        const userRes = await db
-                            .collection('users')
-                            .doc(mealRes.data().hostId)
-                            .get()
-                        if (userRes.exists) {
-                            setHostData(userRes.data())
-                        } else {
-                            console.log('No such document!')
-                        }
-                    }
-                } else {
-                    console.log('No such document!')
-                }
-            } catch (error) {
-                console.log('Error getting document:', error)
-            }
-        }
-        fetchData()
-    }, [mealId])
+    const { user } = useUser()
 
     const mealDate =
         mealData && mealData.time ? new Date(mealData.time) : undefined
@@ -114,8 +81,6 @@ export default function MealCard() {
                     <span>{getDateString(mealDate)}</span>
                     <LocationPinIcon />
                     <span>{mealData.location}</span>
-                    <DistanceIcon />
-                    <span>DISTANCE TODO</span>
                     <ExpirationIcon />
                     <span>Expires {getDateString(expiration)}</span>
                 </div>
@@ -123,6 +88,11 @@ export default function MealCard() {
                     variant="contained"
                     color="primary"
                     style={{ float: 'right' }}
+                    onClick={async () => {
+                        if (!(await doesRequestExist(mealId, user.uid))) {
+                            newRequest(mealData.hostId, mealId, user.uid)
+                        }
+                    }}
                 >
                     Join Meal
                 </Button>
