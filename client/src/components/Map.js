@@ -30,8 +30,8 @@ const posError = () => {
     }
 }
 
-const SimpleMap = ({ meals }) => {
-    const [center, setCenter] = React.useState()
+const SimpleMap = ({ meals, overrideCenter }) => {
+    const [center, setCenter] = React.useState(overrideCenter || null)
     //const [pins, setPins] = React.useState([])
     const showPosition = (position) => {
         let lat = position.coords.latitude
@@ -55,19 +55,16 @@ const SimpleMap = ({ meals }) => {
                     lng={meals[i].longitude}
                     text={meals[i].name}
                     link={`/meals/display/${meals[i].id}`}
+                    key={meals[i].id}
                 />
             )
             pinArray.push(currPin)
         }
     }
     React.useEffect(() => {
-        getPosition()
-    }, [getPosition])
-    // React.useEffect(() => {
-    //     if(props.meals !== undefined){
-    //         buildPins(props.meals)
-    //     }
-    // }, [props.meals])
+        if (!overrideCenter) getPosition()
+    }, [overrideCenter, getPosition, meals])
+
     if (center)
         return (
             // Important! Always set the container height explicitly
