@@ -139,7 +139,13 @@ export function RequestCard() {
                     mealData.filter((meal) => meal.id === request.MealId)
                 )
                 return (
-                    <li key={request.MealId} style={{ listStyleType: 'none' }}>
+                    <li
+                        key={request.MealId}
+                        style={{
+                            listStyleType: 'none',
+                            padding: 10,
+                        }}
+                    >
                         <Card>
                             <CardHeader title={requestMeal.name} />
 
