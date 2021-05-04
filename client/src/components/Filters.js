@@ -21,9 +21,9 @@ export const Filters = ({ appliedFilters, setAppliedFilters }) => {
                 style={{
                     backgroundColor: '#ff9800',
                     color: '#2F4858',
-                    position: 'fixed',
-                    top: 65,
-                    right: 25,
+                    float: 'right',
+                    marginTop: 10,
+                    marginRight: 10,
                     zIndex: 9999,
                 }}
             >

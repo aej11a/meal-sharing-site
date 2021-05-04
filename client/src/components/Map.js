@@ -2,14 +2,21 @@ import React from 'react'
 import GoogleMapReact from 'google-map-react'
 import { Link } from 'react-router-dom'
 
-const Pin = ({ text, link }) => (
-    <Link to={link} style={{ textDecoration: 'none', color: 'black' }}>
+const Pin = ({ text, link }) => {
+    const innerContent = (
         <div style={{ marginLeft: '-20px', marginTop: '-40px' }}>
             <img style={{ height: 40 }} src="/mapPin.png" alt="Pin"></img>
             {text}
         </div>
-    </Link>
-)
+    )
+    return link ? (
+        <Link to={link} style={{ textDecoration: 'none', color: 'black' }}>
+            {innerContent}
+        </Link>
+    ) : (
+        innerContent
+    )
+}
 
 const posError = () => {
     if (navigator.permission) {
