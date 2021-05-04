@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import firebase from 'firebase'
-import { storage } from 'firebase'
+import { storage } from '../firebase'
 import Button from '@material-ui/core/Button'
 import MTextField from '@material-ui/core/TextField'
 import MSelect from '@material-ui/core/Select'
@@ -16,6 +16,7 @@ import { useUser } from '../App'
 import { useHistory } from 'react-router-dom'
 import { ImageUpload } from './ImageUpload'
 
+require('firebase/storage')
 require('firebase/firestore')
 
 const Select = (props) => (
@@ -60,9 +61,40 @@ export const MealCreationForm = () => {
     const [dishName, setDishName] = useState()
     const [dishIngredients, setDishIngredients] = useState()
     const [dishImage, setDishImage] = useState(null)
-    const [url, setUrl] = useState('')
+    const [dishUrl, setDishUrl] = useState('')
     const history = useHistory()
     const { user } = useUser()
+
+    //getting image info + url
+
+    const handleChange = (e) => {
+        if (e.target.files[0]) {
+            setDishImage(e.target.files[0])
+        }
+        console.log('image received')
+    }
+
+    const handleUpload = () => {
+        const uploadTask = storage
+            .ref(`images/${dishImage.name}`)
+            .put(dishImage)
+        uploadTask.on(
+            'state_changed',
+            (snapshot) => {},
+            (error) => {
+                console.log(error)
+            },
+            () => {
+                storage
+                    .ref('images')
+                    .child(dishImage.name)
+                    .getDownloadURL()
+                    .then((url) => {
+                        setDishUrl(url)
+                    })
+            }
+        )
+    }
 
     if (!user) {
         history.push('/account')
@@ -75,14 +107,14 @@ export const MealCreationForm = () => {
                 dishName,
                 dishIngredients,
                 dishCourse: course,
-                dishImage, //adding image portion
+                dishUrl, //adding image portion
             },
         ])
         setCourse(null)
         setDishName(null)
         setDishIngredients(null)
         setShowDishes(false)
-        setDishImage(null) //image stuff
+        setDishUrl(null) //image stuff
     }
 
     const handleSubmit = async (event) => {
@@ -274,7 +306,21 @@ export const MealCreationForm = () => {
                             <Button onClick={addDish} variant={'contained'}>
                                 Upload image
                             </Button> */}
-                            <ImageUpload></ImageUpload>
+                            <div>
+                                <input type="file" onChange={handleChange} />
+                                <button onClick={handleUpload}> Upload </button>
+                                <div></div>
+                                <div>
+                                    <img
+                                        style={{
+                                            width: '300px',
+                                            height: '280px',
+                                        }}
+                                        src={dishUrl}
+                                        alt="firebase-image"
+                                    />
+                                </div>
+                            </div>
 
                             <br></br>
 
