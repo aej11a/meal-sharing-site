@@ -1,4 +1,4 @@
-import React, { useState, createContext, useContext } from 'react'
+import React, { useState, createContext, useContext, useEffect } from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { Home } from './pages/Home'
 import { AccountPage } from './pages/Account/AccountPage'
@@ -57,29 +57,70 @@ const UserProvider = ({ children }) => {
     )
 }
 
+const MealStore = createContext()
+export const useMeals = () => useContext(MealStore)
+const MealProvider = ({ children }) => {
+    const [meals, setMeals] = useState()
+    const getMeals = async (allergens) => {
+        const snapshot = await db.collection('meals').get()
+        const rawMealsData = snapshot.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id,
+        }))
+        if (allergens && allergens.length) {
+            setMeals(
+                rawMealsData.filter((meal) => {
+                    let isMealSafe = true
+
+                    allergens.forEach((allergen) => {
+                        meal.dishes.forEach((dish) => {
+                            if (dish.dishIngredients.includes(allergen))
+                                isMealSafe = false
+                        })
+                    })
+
+                    return isMealSafe
+                })
+            )
+        } else {
+            setMeals(rawMealsData)
+        }
+    }
+
+    useEffect(() => getMeals(), [])
+
+    return (
+        <MealStore.Provider value={{ meals, getMeals }}>
+            {children}
+        </MealStore.Provider>
+    )
+}
+
 export const App = () => {
     return (
         <ThemeProvider theme={theme}>
             <UserProvider>
-                <Router>
-                    <NavBar />
-                    {/* A <Switch> looks through its children <Route>s and
+                <MealProvider>
+                    <Router>
+                        <NavBar />
+                        {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
-                    <Switch>
-                        <Route exact path="/">
-                            <Home />
-                        </Route>
-                        <Route exact path="/account">
-                            <AccountPage />
-                        </Route>
-                        <Route exact path="/meals/new">
-                            <MealCreation />
-                        </Route>
-                        <Route exact path="/meals/display/:mealId">
-                            <MealDisplay />
-                        </Route>
-                    </Switch>
-                </Router>
+                        <Switch>
+                            <Route exact path="/">
+                                <Home />
+                            </Route>
+                            <Route exact path="/account">
+                                <AccountPage />
+                            </Route>
+                            <Route exact path="/meals/new">
+                                <MealCreation />
+                            </Route>
+                            <Route exact path="/meals/display/:mealId">
+                                <MealDisplay />
+                            </Route>
+                        </Switch>
+                    </Router>
+                </MealProvider>
             </UserProvider>
         </ThemeProvider>
     )
