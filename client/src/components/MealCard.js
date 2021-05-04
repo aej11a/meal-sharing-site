@@ -17,6 +17,7 @@ import { useViewport } from '../use-viewport'
 import { newRequest, doesRequestExist } from './MealInviteHandler'
 import { useUser } from '../App'
 import { useHistory } from 'react-router-dom'
+import Map from './Map'
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -58,17 +59,13 @@ export default function MealCard({ hostData, mealData, mealId }) {
         <>
             <CardMedia
                 className={classes.media}
-                //image="https://miro.medium.com/max/1226/1*zGmA-8Fi6gZt7-je1_MOLQ.png"
                 component={() => (
-                    <iframe
-                        src={mealData.map_url}
-                        width="100%"
-                        height="350px"
-                        id="myId"
-                        title="cardMap"
-                        className="myClassname"
-                        display="initial"
-                        position="relative"
+                    <Map
+                        overrideCenter={{
+                            lng: mealData.longitude,
+                            lat: mealData.latitude,
+                        }}
+                        meals={[mealData]}
                     />
                 )}
                 title="Map"
