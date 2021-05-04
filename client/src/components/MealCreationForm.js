@@ -38,6 +38,7 @@ const TextField = (props) => (
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
+        marginBottom: '10px',
     },
     details: {
         display: 'flex',
@@ -52,8 +53,6 @@ const useStyles = makeStyles((theme) => ({
     controls: {
         display: 'flex',
         alignItems: 'center',
-        paddingLeft: theme.spacing(1),
-        paddingBottom: theme.spacing(1),
     },
 }))
 
@@ -341,28 +340,22 @@ export const MealCreationForm = () => {
                             />
                             <br></br>
 
-                            <br></br>
-                            {/** 
-                            <Button onClick={addDish} variant={'contained'}>
-                                Upload image
-                            </Button> */}
                             <div>
                                 <input type="file" onChange={handleChange} />
-                                <button onClick={handleUpload}> Upload </button>
-                                <div></div>
-                                <div>
-                                    <img
-                                        style={{
-                                            width: '300px',
-                                            height: '280px',
-                                        }}
-                                        src={dishUrl}
-                                        alt="firebase-image"
-                                    />
-                                </div>
-                            </div>
+                                <br></br>
+                                <br></br>
 
-                            <br></br>
+                                <div>
+                                    <Button
+                                        onClick={handleUpload}
+                                        variant="contained"
+                                    >
+                                        {' '}
+                                        Upload Image{' '}
+                                    </Button>
+                                </div>
+                                <div></div>
+                            </div>
 
                             <br />
                             <Button onClick={addDish} variant={'contained'}>
