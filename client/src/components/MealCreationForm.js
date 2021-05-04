@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
 import firebase from 'firebase'
 import { storage } from '../firebase'
+import { makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import MTextField from '@material-ui/core/TextField'
 import MSelect from '@material-ui/core/Select'
 import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
+import CardMedia from '@material-ui/core/CardMedia'
 import CardContent from '@material-ui/core/CardContent'
 import MenuItem from '@material-ui/core/MenuItem'
 import InputLabel from '@material-ui/core/InputLabel'
@@ -14,7 +16,7 @@ import { db } from '../firebase'
 import { getCoordinates } from '../forward-geocoding'
 import { useUser } from '../App'
 import { useHistory } from 'react-router-dom'
-import { ImageUpload } from './ImageUpload'
+import Typography from '@material-ui/core/Typography'
 
 require('firebase/storage')
 require('firebase/firestore')
@@ -32,23 +34,61 @@ const TextField = (props) => (
     />
 )
 
+//styling for dish display card
+const useStyles = makeStyles((theme) => ({
+    root: {
+        display: 'flex',
+    },
+    details: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    content: {
+        flex: '1 0 auto',
+    },
+    cover: {
+        width: 151,
+    },
+    controls: {
+        display: 'flex',
+        alignItems: 'center',
+        paddingLeft: theme.spacing(1),
+        paddingBottom: theme.spacing(1),
+    },
+}))
+
 export const DishDisplay = ({ dish, removeDish }) => {
+    const classes = useStyles()
     return (
-        <Card>
-            <CardContent>
-                <p style={{ textTransform: 'capitalize', color: '#999' }}>
-                    {dish.dishCourse}
-                </p>
-                <h3>{dish.dishName}</h3>
-                <p>{dish.dishIngredients}</p>
-            </CardContent>
-            {removeDish && (
-                <CardActions>
-                    <Button size="small" onClick={removeDish}>
-                        Remove
-                    </Button>
-                </CardActions>
-            )}
+        <Card className={classes.root}>
+            <div className={classes.details}>
+                <CardContent>
+                    <Typography component="h5" variant="h5">
+                        {dish.dishCourse}
+                    </Typography>
+                    <Typography component="p" variant="p">
+                        {dish.dishName}
+                    </Typography>
+
+                    <Typography component="p" variant="p">
+                        {dish.dishIngredients}
+                    </Typography>
+                </CardContent>
+            </div>
+            <CardMedia
+                className={classes.cover}
+                image={dish.dishUrl}
+                title="dish-image"
+            />
+            <div className={classes.controls}>
+                {removeDish && (
+                    <CardActions>
+                        <Button size="small" onClick={removeDish}>
+                            Remove
+                        </Button>
+                    </CardActions>
+                )}
+            </div>
         </Card>
     )
 }
