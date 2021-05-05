@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardHeader from '@material-ui/core/CardHeader'
@@ -33,6 +33,7 @@ export default function MealCard({ hostData, mealData, mealId }) {
     const classes = useStyles()
     const { isMobile } = useViewport()
     const { user } = useUser()
+    const [buttonState, setButtonState] = React.useState()
 
     const mealDate =
         mealData && mealData.time ? new Date(mealData.time) : undefined
@@ -49,6 +50,14 @@ export default function MealCard({ hostData, mealData, mealId }) {
             second: 'numeric',
         })
     }
+
+    useEffect(() => {
+        if (user) {
+            doesRequestExist(mealId, user.uid).then((reqExists) => {
+                if (reqExists) setButtonState('confirmed')
+            })
+        }
+    }, [user]) //eslint-disable-line
 
     const innerContent = !mealData ? (
         <p>Loading...</p>
@@ -92,13 +101,24 @@ export default function MealCard({ hostData, mealData, mealId }) {
                     color="primary"
                     style={{ float: 'right' }}
                     onClick={async () => {
+                        setButtonState('loading')
                         if (!(await doesRequestExist(mealId, user.uid))) {
                             newRequest(mealData.hostId, mealId, user.uid)
                         }
+                        setButtonState('confirmed')
                     }}
-                    disabled={mealData.hostId === user.uid}
+                    disabled={
+                        mealData.hostId === user.uid ||
+                        buttonState === 'confirmed'
+                    }
                 >
-                    {mealData.hostId === user.uid ? 'Hosting' : 'Join Meal'}
+                    {buttonState === 'loading'
+                        ? 'Loading...'
+                        : buttonState === 'confirmed'
+                        ? 'Requested to Join'
+                        : mealData.hostId === user.uid
+                        ? 'Hosting'
+                        : 'Join Meal'}
                 </Button>
             </CardContent>
 
