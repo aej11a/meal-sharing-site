@@ -37,6 +37,8 @@ const TextField = (props) => (
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'inline-flex',
+        justifyContent: 'space-between',
+        width: '100%',
         margin: '10',
     },
     details: {
@@ -67,10 +69,10 @@ export const DishDisplay = ({ dish, removeDish }) => {
                 <div className={classes.details}>
                     <CardContent className={classes.content}>
                         <Typography component="h5" variant="h5">
-                            {dish.dishCourse}
+                            {dish.dishName}
                         </Typography>
                         <Typography component="p" variant="p">
-                            {dish.dishName}
+                            {dish.dishCourse}
                         </Typography>
 
                         <Typography component="p" variant="p">

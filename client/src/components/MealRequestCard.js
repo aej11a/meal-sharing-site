@@ -31,6 +31,7 @@ export default function MealRequestCard({ mealData, mealId }) {
     const { user } = useUser()
     const [requestData, setRequestData] = useState()
     const [inviteeData, setInviteeData] = useState()
+    const [docNotFound, setDocNotFound] = useState(false)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -71,6 +72,7 @@ export default function MealRequestCard({ mealData, mealId }) {
                                     }
                                 } else {
                                     console.log('No such document!')
+                                    setDocNotFound(true)
                                 }
                             })
                             const results = await Promise.all(queries)
@@ -78,10 +80,12 @@ export default function MealRequestCard({ mealData, mealId }) {
                         }
                     } else {
                         console.log('No such document!')
+                        setDocNotFound(true)
                     }
                 }
             } catch (error) {
                 console.log('Error getting document:', error)
+                setDocNotFound(true)
             }
         }
         fetchData()
@@ -186,5 +190,7 @@ export default function MealRequestCard({ mealData, mealId }) {
         </Grid>
     )
 
-    return user && user.uid === mealData.hostId ? mobileDisplay : <div></div>
+    return user && user.uid === mealData.hostId && !docNotFound
+        ? mobileDisplay
+        : null
 }

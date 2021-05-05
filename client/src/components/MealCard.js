@@ -76,7 +76,10 @@ export default function MealCard({ hostData, mealData, mealId }) {
                     }}
                 >
                     <AccountCircleIcon />
-                    <span>{hostData && hostData.name}</span>
+                    <span>
+                        {hostData && hostData.name}
+                        {mealData.hostId === user.uid && ' (you)'}
+                    </span>
                     <CalendarIcon />
                     <span>{getDateString(mealDate)}</span>
                     <LocationPinIcon />
@@ -93,8 +96,9 @@ export default function MealCard({ hostData, mealData, mealId }) {
                             newRequest(mealData.hostId, mealId, user.uid)
                         }
                     }}
+                    disabled={mealData.hostId === user.uid}
                 >
-                    Join Meal
+                    {mealData.hostId === user.uid ? 'Hosting' : 'Join Meal'}
                 </Button>
             </CardContent>
 
