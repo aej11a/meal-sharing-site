@@ -1,4 +1,5 @@
 import firebaseLib from 'firebase'
+//import 'firebase/storage'
 
 export const firebase = firebaseLib.initializeApp({
     apiKey: 'AIzaSyDTcOhMHYO4q9iqKBD75sicIxiBLJnFS2s',
@@ -10,6 +11,8 @@ export const firebase = firebaseLib.initializeApp({
 })
 
 export const db = firebase.firestore()
+export const storage = firebase.storage() //root reference
 
 require('firebase/auth')
 require('firebase/firestore')
+require('firebase/storage')

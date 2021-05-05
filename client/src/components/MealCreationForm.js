@@ -1,18 +1,23 @@
 import React, { useState } from 'react'
 import firebase from 'firebase'
+import { storage } from '../firebase'
+import { makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import MTextField from '@material-ui/core/TextField'
 import MSelect from '@material-ui/core/Select'
 import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
+import CardMedia from '@material-ui/core/CardMedia'
 import CardContent from '@material-ui/core/CardContent'
 import MenuItem from '@material-ui/core/MenuItem'
 import InputLabel from '@material-ui/core/InputLabel'
 import { db } from '../firebase'
 import { getCoordinates } from '../forward-geocoding'
 import { useUser } from '../App'
+import Typography from '@material-ui/core/Typography'
 
+require('firebase/storage')
 require('firebase/firestore')
 
 const Select = (props) => (
@@ -28,23 +33,66 @@ const TextField = (props) => (
     />
 )
 
+//styling for dish display card
+const useStyles = makeStyles((theme) => ({
+    root: {
+        display: 'inline-flex',
+        margin: '10',
+    },
+    details: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    content: {
+        flex: '1 0 auto',
+    },
+    cover: {
+        width: 151,
+    },
+    controls: {
+        display: 'flex',
+        flexDirection: 'row',
+    },
+
+    regularCard: {
+        marginBottom: '10px',
+    },
+}))
+
 export const DishDisplay = ({ dish, removeDish }) => {
+    const classes = useStyles()
     return (
-        <Card>
-            <CardContent>
-                <p style={{ textTransform: 'capitalize', color: '#999' }}>
-                    {dish.dishCourse}
-                </p>
-                <h3>{dish.dishName}</h3>
-                <p>{dish.dishIngredients}</p>
-            </CardContent>
-            {removeDish && (
-                <CardActions>
-                    <Button size="small" onClick={removeDish}>
-                        Remove
-                    </Button>
-                </CardActions>
-            )}
+        <Card className={classes.regularCard}>
+            <div className={classes.root}>
+                <div className={classes.details}>
+                    <CardContent className={classes.content}>
+                        <Typography component="h5" variant="h5">
+                            {dish.dishCourse}
+                        </Typography>
+                        <Typography component="p" variant="p">
+                            {dish.dishName}
+                        </Typography>
+
+                        <Typography component="p" variant="p">
+                            {dish.dishIngredients}
+                        </Typography>
+                    </CardContent>
+                </div>
+                <CardMedia
+                    className={classes.cover}
+                    image={dish.dishUrl}
+                    title="dish-image"
+                />
+            </div>
+            <div className={classes.controls}>
+                {removeDish && (
+                    <CardActions>
+                        <Button size="small" onClick={removeDish}>
+                            Remove
+                        </Button>
+                    </CardActions>
+                )}
+            </div>
         </Card>
     )
 }
@@ -57,7 +105,40 @@ export const MealCreationForm = () => {
     const [message, setMessage] = useState()
     const [dishName, setDishName] = useState()
     const [dishIngredients, setDishIngredients] = useState()
+    const [dishImage, setDishImage] = useState(null)
+    const [dishUrl, setDishUrl] = useState('')
     const { user } = useUser()
+
+    //getting image info + url
+
+    const handleChange = (e) => {
+        if (e.target.files[0]) {
+            setDishImage(e.target.files[0])
+        }
+        console.log('image received')
+    }
+
+    const handleUpload = () => {
+        const uploadTask = storage
+            .ref(`images/${dishImage.name}`)
+            .put(dishImage)
+        uploadTask.on(
+            'state_changed',
+            (snapshot) => {},
+            (error) => {
+                console.log(error)
+            },
+            () => {
+                storage
+                    .ref('images')
+                    .child(dishImage.name)
+                    .getDownloadURL()
+                    .then((url) => {
+                        setDishUrl(url)
+                    })
+            }
+        )
+    }
 
     const addDish = () => {
         setDishes([
@@ -66,12 +147,14 @@ export const MealCreationForm = () => {
                 dishName,
                 dishIngredients,
                 dishCourse: course,
+                dishUrl, //dish image url
             },
         ])
         setCourse(null)
         setDishName(null)
         setDishIngredients(null)
         setShowDishes(false)
+        setDishUrl(null)
     }
 
     const handleSubmit = async (event) => {
@@ -259,6 +342,27 @@ export const MealCreationForm = () => {
                                     setDishIngredients(e.target.value)
                                 }
                             />
+                            <br></br>
+
+                            <div>
+                                {/**gets user uploaded file */}
+                                <input type="file" onChange={handleChange} />
+                                <br></br>
+                                <br></br>
+
+                                <div>
+                                    {' '}
+                                    {/**sends the uploaded file to the database and produces a firebase URL*/}
+                                    <Button
+                                        onClick={handleUpload}
+                                        variant="contained"
+                                    >
+                                        Upload Image
+                                    </Button>
+                                </div>
+                                <div></div>
+                            </div>
+
                             <br />
                             <Button onClick={addDish} variant={'contained'}>
                                 Add Dish
