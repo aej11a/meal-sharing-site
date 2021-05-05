@@ -5,6 +5,7 @@ import CardContent from '@material-ui/core/CardContent'
 import CardMedia from '@material-ui/core/CardMedia'
 import Typography from '@material-ui/core/Typography'
 import { Link } from 'react-router-dom'
+import { DishDisplay } from './MealCreationForm'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -56,7 +57,7 @@ export const MealListItem = ({ meal }) => {
                 </div>
                 <CardMedia
                     className={classes.image}
-                    image="https://images.immediate.co.uk/production/volatile/sites/30/2020/08/chorizo-mozarella-gnocchi-bake-cropped-9ab73a3.jpg?quality=90&resize=700%2C636"
+                    image={meal.dishes[0].dishUrl}
                     title="Meal image"
                 />
             </Card>

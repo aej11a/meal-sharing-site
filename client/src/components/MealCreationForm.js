@@ -17,6 +17,7 @@ import { getCoordinates } from '../forward-geocoding'
 import { useUser } from '../App'
 import { useHistory } from 'react-router-dom'
 import Typography from '@material-ui/core/Typography'
+import { formatRelative } from 'date-fns'
 
 require('firebase/storage')
 require('firebase/firestore')
@@ -37,8 +38,8 @@ const TextField = (props) => (
 //styling for dish display card
 const useStyles = makeStyles((theme) => ({
     root: {
-        display: 'flex',
-        marginBottom: '10px',
+        display: 'inline-flex',
+        margin: '10',
     },
     details: {
         display: 'flex',
@@ -52,33 +53,39 @@ const useStyles = makeStyles((theme) => ({
     },
     controls: {
         display: 'flex',
-        alignItems: 'center',
+        flexDirection: 'row',
+    },
+
+    regularCard: {
+        marginBottom: '10px',
     },
 }))
 
 export const DishDisplay = ({ dish, removeDish }) => {
     const classes = useStyles()
     return (
-        <Card className={classes.root}>
-            <div className={classes.details}>
-                <CardContent>
-                    <Typography component="h5" variant="h5">
-                        {dish.dishCourse}
-                    </Typography>
-                    <Typography component="p" variant="p">
-                        {dish.dishName}
-                    </Typography>
+        <Card className={classes.regularCard}>
+            <div className={classes.root}>
+                <div className={classes.details}>
+                    <CardContent className={classes.content}>
+                        <Typography component="h5" variant="h5">
+                            {dish.dishCourse}
+                        </Typography>
+                        <Typography component="p" variant="p">
+                            {dish.dishName}
+                        </Typography>
 
-                    <Typography component="p" variant="p">
-                        {dish.dishIngredients}
-                    </Typography>
-                </CardContent>
+                        <Typography component="p" variant="p">
+                            {dish.dishIngredients}
+                        </Typography>
+                    </CardContent>
+                </div>
+                <CardMedia
+                    className={classes.cover}
+                    image={dish.dishUrl}
+                    title="dish-image"
+                />
             </div>
-            <CardMedia
-                className={classes.cover}
-                image={dish.dishUrl}
-                title="dish-image"
-            />
             <div className={classes.controls}>
                 {removeDish && (
                     <CardActions>
@@ -146,14 +153,14 @@ export const MealCreationForm = () => {
                 dishName,
                 dishIngredients,
                 dishCourse: course,
-                dishUrl, //adding image portion
+                dishUrl, //dish image url
             },
         ])
         setCourse(null)
         setDishName(null)
         setDishIngredients(null)
         setShowDishes(false)
-        setDishUrl(null) //image stuff
+        setDishUrl(null)
     }
 
     const handleSubmit = async (event) => {
@@ -341,17 +348,19 @@ export const MealCreationForm = () => {
                             <br></br>
 
                             <div>
+                                {/**gets user uploaded file */}
                                 <input type="file" onChange={handleChange} />
                                 <br></br>
                                 <br></br>
 
                                 <div>
+                                    {' '}
+                                    {/**sends the uploaded file to the database and produces a firebase URL*/}
                                     <Button
                                         onClick={handleUpload}
                                         variant="contained"
                                     >
-                                        {' '}
-                                        Upload Image{' '}
+                                        Upload Image
                                     </Button>
                                 </div>
                                 <div></div>
