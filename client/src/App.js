@@ -10,6 +10,7 @@ import { MealCreation } from './pages/MealCreation'
 import { MealDisplay } from './pages/MealDisplay'
 import { RequestsDisplay } from './pages/RequestsDisplay'
 import { firebase, db } from './firebase'
+import { MyMeals } from './components/MyMeals'
 
 const theme = createMuiTheme({
     palette: {
@@ -119,6 +120,9 @@ export const App = () => {
                             </Route>
                             <Route exact path="/meals/display/:mealId">
                                 <MealDisplay />
+                            </Route>
+                            <Route exact path="/meals/my-meals">
+                                <MyMeals />
                             </Route>
                             <Route exact path="/requests">
                                 <RequestsDisplay />
