@@ -15,9 +15,7 @@ import InputLabel from '@material-ui/core/InputLabel'
 import { db } from '../firebase'
 import { getCoordinates } from '../forward-geocoding'
 import { useUser } from '../App'
-import { useHistory } from 'react-router-dom'
 import Typography from '@material-ui/core/Typography'
-import { formatRelative } from 'date-fns'
 
 require('firebase/storage')
 require('firebase/firestore')
@@ -104,11 +102,11 @@ export const MealCreationForm = () => {
     const [isShowDishes, setShowDishes] = useState(false)
     const [dishes, setDishes] = useState([])
     const [course, setCourse] = useState()
+    const [message, setMessage] = useState()
     const [dishName, setDishName] = useState()
     const [dishIngredients, setDishIngredients] = useState()
     const [dishImage, setDishImage] = useState(null)
     const [dishUrl, setDishUrl] = useState('')
-    const history = useHistory()
     const { user } = useUser()
 
     //getting image info + url
@@ -140,10 +138,6 @@ export const MealCreationForm = () => {
                     })
             }
         )
-    }
-
-    if (!user) {
-        history.push('/account')
     }
 
     const addDish = () => {
@@ -204,10 +198,8 @@ export const MealCreationForm = () => {
                             'none'
                         event.target.reset()
                         setDishes([])
-                        alert(
-                            'Your meal has been posted! (Testing: It has the ID ' +
-                                docRef.id +
-                                ')'
+                        setMessage(
+                            `<div style="color: #4a824b; border: 1px solid #4a824b; padding: 3px;">Your meal has been posted! <a href="/meals/display/${docRef.id}">View it here.</a></div>`
                         )
                     })
             })
@@ -232,6 +224,11 @@ export const MealCreationForm = () => {
                     id="create-form"
                 >
                     <div style={{ display: isShowDishes ? 'none' : 'block' }}>
+                        {typeof message === 'string' && (
+                            <div
+                                dangerouslySetInnerHTML={{ __html: message }}
+                            />
+                        )}
                         <h1>Create your Meal</h1>
                         <form onSubmit={handleSubmit}>
                             <TextField

@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useMeals } from '../App'
 import Button from '@material-ui/core/Button'
 import Fab from '@material-ui/core/Fab'
 import FilterListIcon from '@material-ui/icons/FilterList'
@@ -11,8 +12,14 @@ const TextField = (props) => (
     />
 )
 
-export const Filters = ({ appliedFilters, setAppliedFilters }) => {
+export const Filters = () => {
     const [showFilterMenu, setShowFilterMenu] = React.useState()
+    const [appliedFilters, setAppliedFilters] = React.useState([])
+    const { getMeals } = useMeals()
+
+    useEffect(() => {
+        getMeals(appliedFilters)
+    }, [appliedFilters]) //eslint-disable-line
 
     return (
         <div className="filters">
@@ -21,10 +28,10 @@ export const Filters = ({ appliedFilters, setAppliedFilters }) => {
                 style={{
                     backgroundColor: '#ff9800',
                     color: '#2F4858',
-                    position: 'fixed',
-                    top: 65,
-                    right: 25,
-                    zIndex: 9999,
+                    float: 'right',
+                    marginTop: 10,
+                    marginRight: 10,
+                    zIndex: 2,
                 }}
             >
                 <FilterListIcon />
