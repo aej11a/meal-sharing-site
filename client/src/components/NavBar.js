@@ -11,6 +11,7 @@ import { useUser } from '../App'
 import { Link as RouterLink } from 'react-router-dom'
 import AccountBoxIcon from '@material-ui/icons/AccountBox'
 import AddBoxIcon from '@material-ui/icons/AddBox'
+import FastfoodIcon from '@material-ui/icons/Fastfood'
 import Drawer from '@material-ui/core/Drawer'
 import MenuIcon from '@material-ui/icons/Menu'
 import ListAltIcon from '@material-ui/icons/ListAlt'
@@ -96,6 +97,11 @@ export const NavBar = () => {
                                 to="/requests"
                                 primary="My Requests"
                                 icon={<ListAltIcon />} //Look up Icons
+                            />
+                            <ListItemLink
+                                to="/meals/my-meals"
+                                primary="My Meals"
+                                icon={<FastfoodIcon />} //Look up Icons
                             />
                         </Drawer>
                     </>
